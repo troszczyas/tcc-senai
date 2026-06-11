@@ -1,137 +1,141 @@
-*{
+/* Reset básico de estilos */
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 
-body{
-      margin: 0;
-    padding: 0;
-    width: 100%;
+body, html {
     height: 100%;
+    width: 100%;
     overflow: hidden;
 }
 
-
-/* TITULOS */
-
-h1{
-    margin-bottom: 25px;
-    color: #003366;
-}
-
-/* INPUTS */
-
-input,
-select{
-    width: 100%;
-    padding: 14px;
-    margin-top: 12px;
-
-    border: 1px solid #ccc;
-    border-radius: 8px;
-
-    outline: none;
-    transition: 0.3s;
-
-    font-size: 15px;
-}
-
-input:focus,
-select:focus{
-    border-color: #003366;
-}
-
-/* BOTÕES */
-
-button{
-    width: 100%;
-    padding: 14px;
-
-    margin-top: 20px;
-
-    background: orange;
-    color: white;
-
-    border: none;
-    border-radius: 8px;
-
-    font-size: 16px;
-    font-weight: bold;
-
-    cursor: pointer;
-
-    transition: 0.3s;
-}
-
-button:hover{
-    background: #ff9800;
-    transform: scale(1.01);
-}
-
-/* TABELA */
-
-table{
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-table th{
-    background: #003366;
-    color: white;
-    padding: 15px;
-    text-align: left;
-}
-
-table td{
-    padding: 14px;
-    border-bottom: 1px solid #ddd;
-}
-
-table tr:hover{
-    background: #f1f1f1;
-}
-
-/* LOGIN */
-
-.img-login {
+/* Container principal dividido em duas colunas */
+.container {
+    display: flex;
+    height: 100vh;
     width: 100vw;
-    height:100vh;
-    object-fit: cover;
-      display: block;
 }
 
+/* Lado Esquerdo - Formulário */
+.login-section {
+    flex: 1;
+    background-color: #0d2c6c;
+    display: flex;
+    justify-content: flex-start; /* Altera de 'center' para 'flex-start' (subir tudo) */
+    align-items: center;     
+    padding: 80px 60px;          /* O primeiro valor (80px) controla a distância do topo */
+    color: #ffffff;
+}
 
+.login-box {
+    width: 100%;
+    max-width: 400px;
+}
 
-@media(max-width: 768px){
+/* Estilização da Logo simulada */
+.logo {
+    font-size: 2rem;
+    font-weight: 700;
+    font-style: italic;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+.logo .dot {
+    color: #ff8c00; /* Detalhe laranja na logo */
+}
 
-    .navbar{
-        flex-direction: column;
-        gap: 15px;
+.title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 40px;
+}
+
+/* Campos de entrada */
+.input-group {
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 30px; /* Deixa os cantos bem arredondados */
+    font-size: 0.9.5rem;
+    color: #333;
+    background-color: #ffffff;
+    outline: none;
+}
+
+.input-group input::placeholder {
+    color: #a0a0a0;
+}
+
+/* Botão Entrar */
+.btn-submit {
+    width: 60%;
+    max-width: 250px;
+    padding: 12px;
+    background-color: #f28100; /* Laranja */
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: block;
+    margin-bottom: 20px;
+    transition: background 0.3s ease;
+}
+
+.btn-submit:hover {
+    background-color: #d67100;
+}
+
+/* Link Esqueceu sua senha */
+.forgot-password {
+    color: #f28100;
+    text-decoration: none;
+    font-size: 0.9rem;
+    display: inline-block;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+/* Lado Direito - Imagem de fundo */
+.image-section {
+    flex: 1;
+    /* Substitua pelo caminho da sua imagem da fábrica */
+    background-image: url('principal.jpg'); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Responsividade simples para telas pequenas (celulares) */
+@media (max-width: 768px) {
+    .image-section {
+        display: none; /* Esconde a imagem no celular para focar no login */
     }
+}
 
-    .nav-links{
-        display: flex;
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .nav-links a{
-        margin: 10px 0;
-    }
-
-    .login-box{
-        width: 90%;
-    }
-
-    .container{
-        width: 95%;
-    }
-
+/* Estilização da nova logo em imagem */
+.logo-img {
+    max-width: 200px;       /* Ajuste a largura máxima conforme o tamanho da sua logo */
+    height: auto;           /* Mantém a proporção da imagem sem distorcer */
+    display: block;
+    margin-bottom: 15px;    /* Dá um espaço entre a logo e a palavra Almoxarifado */
+    margin-left: 15px; /* Altere esse valor para empurrar mais para a direita ou esquerda */
 }

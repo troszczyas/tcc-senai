@@ -1,0 +1,204 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: #f7f9fc;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* NAVBAR */
+.navbar {
+    background-color: #0d2c6c;
+    color: white;
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.menu-icon {
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.nav-left h2 {
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-icon {
+    font-size: 1.4rem;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 5px;
+    border-radius: 50%;
+}
+
+/* CONTAINER PRINCIPAL */
+.main-container {
+    display: flex;
+    margin-top: 60px; /* Para não ficar embaixo da navbar */
+    height: calc(100vh - 60px);
+    width: 100%;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 240px;
+    background-color: #0d2c6c;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 15px;
+}
+
+.menu-item {
+    color: #b0c4de;
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.menu-item.active {
+    background-color: #f28100; /* Laranja ativo do mockup */
+    color: white;
+}
+
+/* CONTEÚDO DA PÁGINA */
+.content-section {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+    background-color: #ffffff;
+    border-top-left-radius: 20px; /* Curvatura charmosa da área interna branca */
+}
+
+.content-header {
+    margin-bottom: 30px;
+}
+
+.page-title {
+    font-size: 2.2rem;
+    color: #0d2c6c;
+    font-weight: 700;
+}
+
+.page-subtitle {
+    color: #7f8c8d;
+    font-size: 0.95rem;
+    margin-top: 5px;
+}
+
+/* BARRA DE AÇÕES (PESQUISA + BOTÃO) */
+.action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.search-input {
+    width: 300px;
+    padding: 10px 15px;
+    border: 1px solid #ccd1d9;
+    border-radius: 20px;
+    outline: none;
+    font-size: 0.9rem;
+}
+
+.btn-add {
+    background-color: #0d2c6c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-add:hover {
+    background-color: #1a3d82;
+}
+
+/* TABELA */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.data-table th {
+    background-color: #1d3b7a;
+    color: white;
+    padding: 14px 18px;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+/* Arredondar os cantos superiores da tabela */
+.data-table th:first-child { border-top-left-radius: 12px; }
+.data-table th:last-child { border-top-right-radius: 12px; }
+
+.data-table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #334155;
+    font-size: 0.95rem;
+}
+
+.data-table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+.action-icons {
+    cursor: pointer;
+    gap: 10px;
+    display: flex;
+    color: #64748b;
+}

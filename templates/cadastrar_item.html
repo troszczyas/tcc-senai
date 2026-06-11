@@ -1,30 +1,86 @@
 <!DOCTYPE html>
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>cadrastrar item</title>
-    <style>
-       
-     html, body {
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
-        overflow: hidden !important; 
-    }
-        .img-login {
-            width: 100vw !important;
-            height: 100vh !important;
-            object-fit: contain !important;
-            display: block !important;
-               margin-top: 0vh !important; 
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Almoxarifado SENAI - Cadastrar Item</title>
+<link rel="stylesheet" href="../static/item.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+<body>
 
-<body style="margin: 0 !important; padding: 0 !important; overflow: hidden !important; background-color: #0c2a5e;">
-    
-    <img src="../static/cadastrar item (1).jpeg" alt="Layout pagina de cadrastrar item" 
-         style="width: 100vw !important; height: 100vh !important; object-fit: fill !important; display: block !important; margin: 0 !important; padding: 0 !important;">
+    <header class="topbar">
+        <div class="topbar-left">
+            <i class="fa-solid fa-bars menu-toggle"></i>
+            <span class="logo-text">Almoxarifado SENAI</span>
+        </div>
+        <div class="topbar-right">
+            <div class="user-profile">
+                <i class="fa-solid fa-circle-user user-icon"></i>
+                <span class="username">admin</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar">
+           <nav class="menu-nav">
+                <a href="#" class="menu-item">Home</a>
+                <a href="#" class="menu-item active">Cadastrar item</a>
+                <a href="#" class="menu-item">Movimentações</a>
+                <a href="#" class="menu-item">Usuários</a>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <h1 class="page-title">Cadastrar item</h1>
+            <p class="page-subtitle">Preencha os dados do item abaixo</p>
+
+            <form class="cadastro-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="nome">Nome do item</label>
+                        <input type="text" id="nome" placeholder="Ex: parafuso 3/8">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="categoria">Categoria</label>
+                        <select id="categoria">
+                            <option value="" disabled selected>selecione a categoria</option>
+                            <option value="ferramentas">Ferramentas</option>
+                            <option value="parafusos">Parafusos/Fixadores</option>
+                            <option value="eletronicos">Eletrônicos</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quantidade">Quantidade</label>
+                        <input type="text" id="quantidade" placeholder="Ex: 100">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="estoque-minimo">Estoque mínimo</label>
+                        <input type="text" id="estoque-minimo" placeholder="Ex: 10">
+                    </div>
+
+                    <div class="form-group full-width-mobile">
+                        <label for="descricao">Descrição</label>
+                        <textarea id="descricao" placeholder="Descreva o item.."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="preco">Preço (R$)</label>
+                        <input type="text" id="preco" placeholder="Ex: 0,00">
+                    </div>
+                </div>
+
+               <div class="form-actions">
+                    <button type="button" class="btn btn-cancelar">Cancelar</button>
+                    <button type="submit" class="btn btn-confirmar">Confirmar</button>
+                </div>
+            </form>
+        </main>
+    </div>
 
 </body>
 </html>

@@ -1,0 +1,240 @@
+/* CONFIGURAÇÕES GERAIS E CORES */
+:root {
+    --bg-dark-blue: #0f2670;
+    --bg-light: #ffffff;
+    --text-dark: #0a1947;
+    --orange-primary: #f08200;
+    --gray-border: #999999;
+    --gray-placeholder: #757575;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--bg-light);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* BARRA SUPERIOR */
+.topbar {
+    background-color: var(--bg-dark-blue);
+    color: white;
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 25px;
+    z-index: 10;
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.menu-toggle {
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.logo-text {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-icon {
+    font-size: 28px;
+}
+
+.username {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* ESTRUTURA PRINCIPAL (SIDEBAR + CONTEÚDO) */
+.main-container {
+    display: flex;
+    flex: 1;
+    height: calc(100vh - 70px);
+}
+
+/* BARRA LATERAL */
+.sidebar {
+    background-color: var(--bg-dark-blue);
+    width: 240px;
+    padding-top: 20px;
+}
+
+.menu-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.menu-item {
+    color: white;
+    text-decoration: none;
+    padding: 15px 25px;
+    font-size: 18px;
+    font-weight: 600;
+    display: block;
+    transition: all 0.2s ease;
+}
+
+/* Item Ativo (Laranja arredondado na direita) */
+.menu-item.active {
+    background-color: var(--orange-primary);
+    color: white;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+    margin-right: 15px;
+}
+
+.menu-item:hover:not(.active) {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ÁREA DO FORMULÁRIO */
+.content {
+    flex: 1;
+    padding: 40px 60px;
+    overflow-y: auto;
+}
+
+.page-title {
+    color: var(--text-dark);
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.page-subtitle {
+    color: var(--text-dark);
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 40px;
+}
+
+/* GRID DO FORMULÁRIO (Dois lados) */
+.cadastro-form {
+    max-width: 1100px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 80px;
+    row-gap: 25px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    color: #000000;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* INPUTS, SELECT E TEXTAREA */
+.form-group input, 
+.form-group select, 
+.form-group textarea {
+    width: 100%;
+    padding: 16px 20px;
+    border: 1px solid var(--gray-border);
+    border-radius: 15px;
+    font-size: 16px;
+    color: #333;
+    outline: none;
+    background-color: #fff;
+}
+
+.form-group input::placeholder, 
+.form-group textarea::placeholder {
+    color: var(--gray-placeholder);
+}
+
+.form-group select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 20px center;
+    background-size: 16px;
+    color: var(--gray-placeholder);
+}
+
+/* Customização do campo de descrição */
+.form-group textarea {
+    height: 140px;
+    resize: none;
+}
+
+/* CONTAINER DOS BOTÕES */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 50px;
+}
+
+/* ESTILO DOS BOTÕES */
+.btn {
+    padding: 14px 40px;
+    font-size: 18px;
+    font-weight: 700;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.btn-cancelar {
+    background-color: var(--bg-dark-blue);
+    color: white;
+}
+
+.btn-salvar {
+    background-color: var(--orange-primary);
+    color: white;
+}
+
+/* RESPONSIVIDADE (Para telas menores ou tablets) */
+@media (max-width: 900px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+        row-gap: 20px;
+    }
+    .content {
+        padding: 20px;
+    }
+    .sidebar {
+        width: 180px;
+    }
+}
+
+.btn-confirmar {
+    background-color: var(--orange-primary);
+    color: white;
+}
