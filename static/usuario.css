@@ -14,11 +14,14 @@ body {
 /* --- SIDEBAR (TOTALMENTE CORRIGIDO) --- */
 .sidebar {
     width: 260px;
+    min-width: 260px; /* Impede que ela encolha se a tela ou a tabela crescer */
+    max-width: 260px; /* Impede que ela aumente */
     background-color: #1a2e6b;
     color: white;
     display: flex;
     flex-direction: column;
     padding-top: 20px;
+    height: 100vh; /* Garante que ocupe sempre a altura total da janela */
 }
 
 .sidebar-menu-toggle {

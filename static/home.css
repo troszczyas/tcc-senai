@@ -62,44 +62,52 @@ body {
 .main-container {
     display: flex;
     margin-top: 60px; /* Para não ficar embaixo da navbar */
-    height: calc(100vh - 60px);
+    height: calc(100vh - 60px); /* Ocupa exatamente o espaço restante */
     width: 100%;
 }
 
-/* SIDEBAR */
+/* SIDEBAR - CORRIGIDA E TRAVADA */
 .sidebar {
-    width: 240px;
-    background-color: #0d2c6c;
-    padding-top: 20px;
+    width: 260px;
+    min-width: 260px; /* Impede que ela encolha se a tabela ou a tela mudar */
+    max-width: 260px; /* Impede que ela aumente */
+    background-color: #1a2e6b;
+    color: white;
     display: flex;
     flex-direction: column;
+    padding-top: 20px;
+    height: 100%; /* Ocupa 100% do main-container (evita quebra com o topo de 60px) */
 }
 
+/* Removido o gap e o padding lateral para o botão ativo encostar perfeitamente */
 .sidebar-menu {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 0 15px;
 }
 
+/* Ajustado os links para o padrão correto do seu sistema */
 .menu-item {
-    color: #b0c4de;
+    display: block;
+    padding: 15px 25px;
+    color: #ffffff;
     text-decoration: none;
-    padding: 12px 20px;
-    border-radius: 25px;
-    font-size: 0.95rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
+    font-weight: 600;
+    font-size: 15px;
+    transition: 0.3s;
 }
 
 .menu-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: #152557;
     color: white;
 }
 
+/* Botão ativo formatado idêntico ao seu mockup (Borda redonda na direita) */
 .menu-item.active {
-    background-color: #f28100; /* Laranja ativo do mockup */
+    background-color: #f28b0c; /* Laranja SENAI do mockup */
     color: white;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+    margin-right: 15px; /* Cria o recuo elegante na lateral */
 }
 
 /* CONTEÚDO DA PÁGINA */
@@ -203,7 +211,7 @@ body {
     color: #64748b;
 }
 
-/* --- ADICIONADO: ESTILO PARA LINHA DE NÃO ENCONTRADO --- */
+/* ESTILO PARA LINHA DE NÃO ENCONTRADO */
 .no-results td {
     text-align: center;
     color: #7f8c8d;
