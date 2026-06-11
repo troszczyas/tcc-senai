@@ -1,0 +1,143 @@
+/* CONFIGURAÇÕES GERAIS E CORES */
+:root {
+    --bg-dark-blue: #0f2670;
+    --bg-light: #ffffff;
+    --text-dark: #0a1947;
+    --orange-primary: #f08200;
+    --gray-border: #999999;
+    --gray-placeholder: #757575;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* CONTAINER PRINCIPAL */
+.container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* LADO ESQUERDO (AZUL) */
+.login-section {
+    flex: 1;
+    background-color: var(--bg-dark-blue);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Alinha os blocos a partir do topo */
+    align-items: center;     
+    padding: 60px 40px; /* Aumentado o recuo superior */
+}
+
+/* CAIXA INTERNA (LOGO, TÍTULO E FORMULÁRIO) */
+.login-box {
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* LOGO DO SENAI (Mantendo o tamanho intocado) */
+.logo-img {
+    max-width: 170px;
+    height: auto;
+    margin-bottom: 5x; /* Espaço controlado entre a logo e o título */
+    align-self: flex-start; 
+}
+
+/* TÍTULO ALMOXARIFADO (SUBIU) */
+.title {
+    color: var(--bg-light);
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 30px; /* Espaço controlado até o formulário */
+}
+
+/* FORMULÁRIO */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    color: var(--bg-light);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 14px 20px;
+    border: 1px solid transparent;
+    border-radius: 25px;
+    font-size: 15px;
+    color: #333;
+    outline: none;
+    background-color: var(--bg-light);
+}
+
+.input-group input::placeholder {
+    color: var(--gray-placeholder);
+}
+
+/* BOTÃO ENTRAR */
+.btn-submit {
+    background-color: var(--orange-primary);
+    color: var(--bg-light);
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: opacity 0.2s;
+}
+
+.btn-submit:hover {
+    opacity: 0.9;
+}
+
+/* LINK ESQUECEU SUA SENHA */
+.forgot-password {
+    color: var(--bg-light);
+    text-decoration: none;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 15px;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.forgot-password:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/* LADO DIREITO (FOTO DA FÁBRICA) */
+.image-section {
+    flex: 1;
+    background-image: url('../static/principal.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* RESPONSIVIDADE (Telas menores) */
+@media (max-width: 850px) {
+    .image-section {
+        display: none;
+    }
+}

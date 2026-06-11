@@ -1,30 +1,125 @@
 <!DOCTYPE html>
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title> cadastrar usuario</title>
-    <style>
-       
-     html, body {
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
-        overflow: hidden !important; 
-    }
-        .img-login {
-            width: 100vw !important;
-            height: 100vh !important;
-            object-fit: contain !important;
-            display: block !important;
-               margin-top: 0vh !important; 
-        }
-    </style>
-</head>
-
-<body style="margin: 0 !important; padding: 0 !important; overflow: hidden !important; background-color: #0c2a5e;">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Almoxarifado SENAI - Cadastrar Usuário</title>
     
-    <img src="../static/cadastrar usuario (1).jpeg" alt="Layout pagina de cadastrar usuario" 
-         style="width: 100vw !important; height: 100vh !important; object-fit: fill !important; display: block !important; margin: 0 !important; padding: 0 !important;">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="../static/usuario.css">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-menu-toggle">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="home.html" class="menu-item">Home</a>
+            <a href="cadastrar_item.html" class="menu-item">Cadastrar item</a>
+            <a href="movimentacao.html" class="menu-item">Movimentações</a>
+            <a href="cadastrar_usuario.html" class="menu-item active">Usuários</a>
+        </nav>
+    </aside>
+
+    <div class="main-content">
+        
+        <header class="header">
+            <h1>Almoxarifado SENAI</h1>
+            <div class="user-profile">
+                <i class="fa-solid fa-circle-user"></i>
+                <span>admin</span>
+            </div>
+        </header>
+
+        <main class="container">
+            <div class="title-section">
+                <h2>Cadastrar Usuário</h2>
+                <p>Crie um novo usuário para o sistema</p>
+            </div>
+
+            <form id="form-cadastro-usuario">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="usuario">Usuário</label>
+                        <input type="text" id="usuario" placeholder="Ex: Fernando Resner" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="senha">Senha</label>
+                        <input type="password" id="senha" placeholder="Crie sua senha..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirme-senha">Confirme a senha</label>
+                        <input type="password" id="confirme-senha" placeholder="Digite novamente sua senha..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="permissao">Permissão</label>
+                        <div class="select-wrapper">
+                            <select id="permissao" required>
+                                <option value="" disabled selected>Selecione o tipo</option>
+                                <option value="administrador">Administrador</option>
+                                <option value="usuario">Usuário</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="section-subtitle">Informações adicionais</h3>
+
+                <div class="form-row">
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label for="email">E-mail (opcional)</label>
+                        <input type="email" id="email" placeholder="Ex: fernando.resner@gmail.com">
+                    </div>
+
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label for="telefone">Telefone (opcional)</label>
+                        <input type="text" id="telefone" placeholder="Ex: (11) 9000-0000">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="observacoes">Observações adicionais</label>
+                        <textarea id="observacoes" placeholder="Digite observações sobre o usuário"></textarea>
+                    </div>
+                </div>
+
+                <div class="btn-container">
+                    <button type="submit" class="btn-save">Salvar usuário</button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <div class="popup-overlay" id="popup-sucesso">
+        <div class="popup-box">
+            <i class="fa-solid fa-circle-check"></i>
+            <h3>Sucesso!</h3>
+            <p>Usuário cadastrado com sucesso.</p>
+        </div>
+    </div>
+
+    <script>
+        const formUsuario = document.getElementById('form-cadastro-usuario');
+        const popupSucesso = document.getElementById('popup-sucesso');
+
+        formUsuario.addEventListener('submit', function(event) {
+            event.preventDefault(); 
+
+            popupSucesso.classList.add('active');
+            formUsuario.reset();
+
+            setTimeout(() => {
+                popupSucesso.classList.remove('active');
+            }, 2500);
+        });
+    </script>
 
 </body>
 </html>

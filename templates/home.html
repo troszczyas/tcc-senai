@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Almoxarifado SENAI - Estoque</title>
+    <title>Almoxarifado SENAI - HOME</title>
     <link rel="stylesheet" href="../static/home.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -25,10 +25,10 @@
     <div class="main-container">
         <aside class="sidebar">
             <nav class="sidebar-menu">
-                <a href="#" class="menu-item active">Home</a>
-                <a href="#" class="menu-item">Cadastrar item</a>
-                <a href="#" class="menu-item">Movimentações</a>
-                <a href="#" class="menu-item">Usuários</a>
+                <a href="home.html" class="menu-item active">Home</a>
+                <a href="cadastrar_item.html" class="menu-item">Cadastrar item</a>
+                <a href="movimentacao.html" class="menu-item">Movimentações</a>
+                <a href="cadastrar_usuario.html" class="menu-item">Usuários</a>
             </nav>
         </aside>
 
@@ -39,8 +39,8 @@
             </div>
 
             <div class="action-bar">
-                <input type="text" class="search-input" placeholder="&#128269; Pesquisar item...">
-                <button class="btn-add">+ Adicionar Itens</button>
+                <input type="text" id="input-pesquisa" class="search-input" placeholder="&#128269; Pesquisar item...">
+                <button id="btn-adicionar" class="btn-add">+ Adicionar Itens</button>
             </div>
 
             <div class="table-container">
@@ -56,7 +56,7 @@
                             <th>Ações</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="tabela-itens">
                         <tr>
                             <td>1</td>
                             <td>Exemplo Item A</td>
@@ -107,6 +107,44 @@
             </div>
         </main>
     </div>
+
+    <script>
+        // --- MECANISMO DE FILTRO DA TABELA ---
+        const inputPesquisa = document.getElementById('input-pesquisa');
+        const tabela = document.getElementById('tabela-itens');
+        const linhas = tabela.getElementsByTagName('tr');
+
+        inputPesquisa.addEventListener('keyup', function() {
+            const termoPesquisa = inputPesquisa.value.toLowerCase().trim();
+
+            for (let i = 0; i < linhas.length; i++) {
+                // Correção ortográfica: mudado de "lines" para "linhas" para evitar erros no JS
+                const celulaNome = linhas[i].getElementsByTagName('td')[1];
+                const celulaCategoria = linhas[i].getElementsByTagName('td')[2];
+
+                if (celulaNome && celulaCategoria) {
+                    const textoNome = celulaNome.textContent.toLowerCase();
+                    const textoCategoria = celulaCategoria.textContent.toLowerCase();
+
+                    if (textoNome.includes(termoPesquisa) || textoCategoria.includes(termoPesquisa)) {
+                        linhas[i].style.display = "";
+                    } else {
+                        linhas[i].style.display = "none";
+                    }
+                }
+            }
+        });
+
+        // --- CONEXÃO DO BOTÃO ADICIONAR ITENS ---
+        const btnAdicionar = document.getElementById('btn-adicionar');
+        if (btnAdicionar) {
+            btnAdicionar.addEventListener('click', function(evento) {
+                evento.stopPropagation();
+                // BOTÃO AZUL CORRIGIDO: Agora ele vai para a página de cadastrar o ITEM no estoque!
+                window.location.href = "cadastrar_item.html";
+            });
+        }
+    </script>
 
 </body>
 </html>

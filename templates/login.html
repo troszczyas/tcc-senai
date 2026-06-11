@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SENAI | Almoxarifado - Login</title>
-   <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../static/login.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -20,12 +20,12 @@
                 <form>
                     <div class="input-group">
                         <label for="username">Usuário</label>
-                        <input type="text" id="username" placeholder="Digite sua matrícula">
+                        <input type="text" id="username" placeholder="Digite sua matrícula" required>
                     </div>
 
                     <div class="input-group">
                         <label for="password">Senha</label>
-                        <input type="password" id="password" placeholder="Digite sua senha">
+                        <input type="password" id="password" placeholder="Digite sua senha" required>
                     </div>
 
                     <button type="submit" class="btn-submit">Entrar</button>
@@ -38,5 +38,16 @@
         <aside class="image-section">
             </aside>
     </div>
+    <script>
+        const formulario = document.querySelector('form');
+        
+        formulario.addEventListener('submit', function(evento) {
+            evento.preventDefault(); // Impede a página de recarregar
+            
+            // Redireciona para o arquivo da sua página de estoque
+            // (Ajuste o nome 'home.html' caso seu arquivo tenha outro nome)
+            window.location.href = "home.html"; 
+        });
+    </script>
 </body>
 </html>

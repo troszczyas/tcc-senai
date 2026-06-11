@@ -202,3 +202,12 @@ body {
     display: flex;
     color: #64748b;
 }
+
+/* --- ADICIONADO: ESTILO PARA LINHA DE NÃO ENCONTRADO --- */
+.no-results td {
+    text-align: center;
+    color: #7f8c8d;
+    font-style: italic;
+    padding: 20px !important;
+    background-color: #f8fafc;
+}

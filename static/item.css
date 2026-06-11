@@ -220,6 +220,11 @@ body {
     color: white;
 }
 
+.btn-confirmar {
+    background-color: var(--orange-primary);
+    color: white;
+}
+
 /* RESPONSIVIDADE (Para telas menores ou tablets) */
 @media (max-width: 900px) {
     .form-grid {
@@ -234,7 +239,55 @@ body {
     }
 }
 
-.btn-confirmar {
-    background-color: var(--orange-primary);
-    color: white;
+/* --- ADICIONADO: ESTILIZAÇÃO DO POP-UP COM SUAS VARIÁVEIS --- */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 999;
+}
+
+.popup-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.popup-box {
+    background-color: var(--bg-light);
+    padding: 30px 50px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+.popup-overlay.active .popup-box {
+    transform: translateY(0);
+}
+
+.popup-box i {
+    color: var(--orange-primary); /* Usa o seu laranja padrão */
+    font-size: 50px;
+    margin-bottom: 15px;
+}
+
+.popup-box h3 {
+    color: var(--text-dark); /* Usa o seu azul escuro */
+    font-size: 22px;
+    margin-bottom: 5px;
+}
+
+.popup-box p {
+    color: #666;
+    font-size: 14px;
 }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Almoxarifado SENAI - Cadastrar Item</title>
-<link rel="stylesheet" href="../static/item.css">
+    <link rel="stylesheet" href="../static/item.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -24,11 +24,11 @@
 
     <div class="main-container">
         <aside class="sidebar">
-           <nav class="menu-nav">
-                <a href="#" class="menu-item">Home</a>
-                <a href="#" class="menu-item active">Cadastrar item</a>
-                <a href="#" class="menu-item">Movimentações</a>
-                <a href="#" class="menu-item">Usuários</a>
+            <nav class="sidebar-menu">
+                <a href="home.html" class="menu-item">Home</a>
+                <a href="cadastrar_item.html" class="menu-item active">Cadastrar item</a>
+                <a href="movimentacao.html" class="menu-item">Movimentações</a>
+                <a href="cadastrar_usuario.html" class="menu-item">Usuários</a>
             </nav>
         </aside>
 
@@ -36,16 +36,16 @@
             <h1 class="page-title">Cadastrar item</h1>
             <p class="page-subtitle">Preencha os dados do item abaixo</p>
 
-            <form class="cadastro-form">
+            <form class="cadastro-form" id="form-cadastro-item">
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="nome">Nome do item</label>
-                        <input type="text" id="nome" placeholder="Ex: parafuso 3/8">
+                        <input type="text" id="nome" placeholder="Ex: parafuso 3/8" required>
                     </div>
 
                     <div class="form-group">
                         <label for="categoria">Categoria</label>
-                        <select id="categoria">
+                        <select id="categoria" required>
                             <option value="" disabled selected>selecione a categoria</option>
                             <option value="ferramentas">Ferramentas</option>
                             <option value="parafusos">Parafusos/Fixadores</option>
@@ -55,12 +55,12 @@
 
                     <div class="form-group">
                         <label for="quantidade">Quantidade</label>
-                        <input type="text" id="quantidade" placeholder="Ex: 100">
+                        <input type="text" id="quantidade" placeholder="Ex: 100" required>
                     </div>
 
                     <div class="form-group">
                         <label for="estoque-minimo">Estoque mínimo</label>
-                        <input type="text" id="estoque-minimo" placeholder="Ex: 10">
+                        <input type="text" id="estoque-minimo" placeholder="Ex: 10" required>
                     </div>
 
                     <div class="form-group full-width-mobile">
@@ -70,17 +70,55 @@
 
                     <div class="form-group">
                         <label for="preco">Preço (R$)</label>
-                        <input type="text" id="preco" placeholder="Ex: 0,00">
+                        <input type="text" id="preco" placeholder="Ex: 0,00" required>
                     </div>
                 </div>
 
                <div class="form-actions">
-                    <button type="button" class="btn btn-cancelar">Cancelar</button>
+                    <button type="button" class="btn btn-cancelar" id="btn-cancelar">Cancelar</button>
                     <button type="submit" class="btn btn-confirmar">Confirmar</button>
                 </div>
             </form>
         </main>
     </div>
+
+    <div class="popup-overlay" id="popup-sucesso">
+        <div class="popup-box">
+            <i class="fa-solid fa-circle-check"></i>
+            <h3>Sucesso!</h3>
+            <p>Item cadastrado com sucesso.</p>
+        </div>
+    </div>
+
+    <script>
+        const formItem = document.getElementById('form-cadastro-item');
+        const popupSucesso = document.getElementById('popup-sucesso');
+        const btnCancelar = document.getElementById('btn-cancelar');
+
+        // Evento de envio do formulário
+        formItem.addEventListener('submit', function(event) {
+            // Impede a página de recarregar
+            event.preventDefault(); 
+
+            // Exibe o pop-up
+            popupSucesso.classList.add('active');
+
+            // Limpa o formulário após salvar
+            formItem.reset();
+
+            // Esconde o pop-up automaticamente após 2.5 segundos
+            setTimeout(() => {
+                popupSucesso.classList.remove('active');
+            }, 2500);
+        });
+
+        // Evento opcional para o botão cancelar (limpa os campos)
+        btnCancelar.addEventListener('click', function() {
+            if(confirm("Deseja realmente limpar os campos preenchidos?")) {
+                formItem.reset();
+            }
+        });
+    </script>
 
 </body>
 </html>

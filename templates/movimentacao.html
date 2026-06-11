@@ -1,30 +1,86 @@
 <!DOCTYPE html>
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Movimentação</title>
-    <style>
-       
-     html, body {
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
-        overflow: hidden !important; 
-    }
-        .img-login {
-            width: 100vw !important;
-            height: 100vh !important;
-            object-fit: contain !important;
-            display: block !important;
-               margin-top: 0vh !important; 
-        }
-    </style>
-</head>
-
-<body style="margin: 0 !important; padding: 0 !important; overflow: hidden !important; background-color: #0c2a5e;">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Almoxarifado SENAI - Movimentação de Estoque</title>
     
-    <img src="../static/movimentação (1).jpg" alt="Layout pagina de movimentacao" 
-         style="width: 100vw !important; height: 100vh !important; object-fit: fill !important; display: block !important; margin: 0 !important; padding: 0 !important;">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="../static/movimentacao.css">
+</head>
+<body>
 
-</body>
-</html>
+    <div class="sidebar">
+        <div class="sidebar-menu-toggle">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="cadastrar_item.html">Cadastrar item</a></li>
+                <li class="active"><a href="movimentacao.html">Movimentações</a></li>
+                <li><a href="cadastrar_usuario.html">Usuários</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        
+        <header class="header">
+            <h1>Almoxarifado SENAI</h1>
+            <div class="user-profile">
+                <i class="fa-solid fa-circle-user"></i>
+                <span>admin</span>
+            </div>
+        </header>
+
+        <main class="container">
+            <div class="title-section">
+                <h2>Movimentação de estoque</h2>
+                <p>Registre entradas e saídas de itens</p>
+            </div>
+
+            <form id="form-movimentacao">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="item">Item</label>
+                        <select id="item" required>
+                            <option value="" disabled selected>Selecione o item</option>
+                            <option value="1">Item Exemplo 1</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tipo">Tipo</label>
+                        <select id="tipo" required>
+                            <option value="" disabled selected>Selecione o tipo</option>
+                            <option value="entrada">Entrada</option>
+                            <option value="saida">Saída</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quantidade">Quantidade</label>
+                        <input type="text" id="quantidade" placeholder="Ex: 10" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="data">Data</label>
+                        <div class="date-input-container">
+                            <input type="text" id="data" placeholder="22/05/2026" required>
+                            <i class="fa-regular fa-calendar-days"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="observacao">Observação (opcional)</label>
+                        <textarea id="observacao" placeholder="Descreva a movimentação..."></textarea>
+                    </div>
+                </div>
+
+                <div class="btn-container">
+                    <button type="submit" class="btn-register">Registrar moviment
