@@ -9,28 +9,29 @@
 </head>
 <body>
 
-    <header class="navbar">
-        <div class="nav-left">
-            <span class="menu-icon">&#9776;</span>
-            <h2>Almoxarifado SENAI</h2>
+    <aside class="sidebar">
+        <div class="sidebar-menu-toggle">
+            <span>&#9776;</span>
         </div>
-        <div class="nav-right">
-            <div class="user-profile">
-                <span class="profile-icon">&#128100;</span>
-                <span class="username">admin</span>
-            </div>
-        </div>
-    </header>
+        <nav>
+            <ul>
+                <li class="active"><a href="home.html">Home</a></li>
+                <li><a href="cadastrar_item.html">Cadastrar item</a></li>
+                <li><a href="movimentacao.html">Movimentações</a></li>
+                <li><a href="cadastrar_usuario.html">Usuários</a></li>
+            </ul>
+        </nav>
+    </aside>
 
-    <div class="main-container">
-        <aside class="sidebar">
-            <nav class="sidebar-menu">
-                <a href="home.html" class="menu-item active">Home</a>
-                <a href="cadastrar_item.html" class="menu-item">Cadastrar item</a>
-                <a href="movimentacao.html" class="menu-item">Movimentações</a>
-                <a href="cadastrar_usuario.html" class="menu-item">Usuários</a>
-            </nav>
-        </aside>
+    <div class="main-content">
+        
+        <header class="header">
+            <h1>Almoxarifado SENAI</h1>
+            <div class="user-profile">
+                <span class="username">admin</span>
+                <i class="profile-icon">&#128100;</i>
+            </div>
+        </header>
 
         <main class="content-section">
             <div class="content-header">
@@ -118,7 +119,6 @@
             const termoPesquisa = inputPesquisa.value.toLowerCase().trim();
 
             for (let i = 0; i < linhas.length; i++) {
-                // Correção ortográfica: mudado de "lines" para "linhas" para evitar erros no JS
                 const celulaNome = linhas[i].getElementsByTagName('td')[1];
                 const celulaCategoria = linhas[i].getElementsByTagName('td')[2];
 
@@ -140,7 +140,6 @@
         if (btnAdicionar) {
             btnAdicionar.addEventListener('click', function(evento) {
                 evento.stopPropagation();
-                // BOTÃO AZUL CORRIGIDO: Agora ele vai para a página de cadastrar o ITEM no estoque!
                 window.location.href = "cadastrar_item.html";
             });
         }

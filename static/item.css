@@ -1,182 +1,164 @@
-/* CONFIGURAÇÕES GERAIS E CORES */
-:root {
-    --bg-dark-blue: #0f2670;
-    --bg-light: #ffffff;
-    --text-dark: #0a1947;
-    --orange-primary: #f08200;
-    --gray-border: #999999;
-    --gray-placeholder: #757575;
-}
+/* --- ARQUIVO DE CADASTRO DE ITEM: VERSÃO FINAL SEM ERRO LATERAL --- */
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 
 body {
-    background-color: var(--bg-light);
+    display: flex;
     height: 100vh;
+    width: 100vw;
+    background-color: #ffffff; 
+    overflow: hidden; /* Garante que nada no body crie barras de rolagem estranhas */
+}
+
+/* --- SIDEBAR --- */
+.sidebar {
+    width: 260px;
+    min-width: 260px; 
+    max-width: 260px; 
+    background-color: #1a2e6b;
+    color: white;
     display: flex;
     flex-direction: column;
+    padding-top: 20px;
+    height: 100vh; 
+}
+
+.sidebar-menu-toggle {
+    padding: 0 25px;
+    font-size: 26px;
+    cursor: pointer;
+    margin-bottom: 40px;
+}
+
+.sidebar nav ul li a {
+    display: block;
+    padding: 15px 25px;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 700; 
+    font-size: 17px; 
+    transition: 0.3s;
+}
+
+.sidebar nav ul li.active a {
+    background-color: #f28b0c;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+    margin-right: 15px;
+}
+
+/* --- CONTEÚDO PRINCIPAL --- */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: calc(100vw - 260px); /* Força a área a ter EXATAMENTE o espaço restante */
     overflow: hidden;
 }
 
-/* BARRA SUPERIOR */
-.topbar {
-    background-color: var(--bg-dark-blue);
+/* --- HEADER (PERFEITO) --- */
+.header {
+    background-color: #1a2e6b;
     color: white;
-    height: 70px;
+    height: 70px; 
+    min-height: 70px;
+    padding: 0 40px; 
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 25px;
-    z-index: 10;
 }
 
-.topbar-left {
-    display: flex;
-    align-items: center;
-    gap: 25px;
-}
-
-.menu-toggle {
-    font-size: 28px;
-    cursor: pointer;
-}
-
-.logo-text {
-    font-size: 22px;
+.header h1 {
+    font-size: 24px; 
     font-weight: 700;
 }
 
 .user-profile {
     display: flex;
     align-items: center;
-    gap: 10px;
-}
-
-.user-icon {
-    font-size: 28px;
-}
-
-.username {
-    font-size: 18px;
-    font-weight: bold;
-}
-
-/* ESTRUTURA PRINCIPAL (SIDEBAR + CONTEÚDO) */
-.main-container {
-    display: flex;
-    flex: 1;
-    height: calc(100vh - 70px);
-}
-
-/* BARRA LATERAL */
-.sidebar {
-    width: 260px;
-    min-width: 260px; /* Impede que ela encolha se a tela ou a tabela crescer */
-    max-width: 260px; /* Impede que ela aumente */
-    background-color: #1a2e6b;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    padding-top: 20px;
-    height: 100vh; /* Garante que ocupe sempre a altura total da janela */
-}
-
-.menu-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.menu-item {
-    color: white;
-    text-decoration: none;
-    padding: 15px 25px;
-    font-size: 18px;
-    font-weight: 600;
-    display: block;
-    transition: all 0.2s ease;
-}
-
-/* Item Ativo (Laranja arredondado na direita) */
-.menu-item.active {
-    background-color: var(--orange-primary);
-    color: white;
-    border-top-right-radius: 25px;
-    border-bottom-right-radius: 25px;
-    margin-right: 15px;
-}
-
-.menu-item:hover:not(.active) {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* ÁREA DO FORMULÁRIO */
-.content {
-    flex: 1;
-    padding: 40px 60px;
-    overflow-y: auto;
-}
-
-.page-title {
-    color: var(--text-dark);
-    font-size: 42px;
+    gap: 10px; 
     font-weight: 700;
+    font-size: 18px;
+}
+
+/* --- CONTAINER INTERNO (AJUSTADO PARA NÃO VAZAR) --- */
+.container {
+    flex: 1;
+    padding: 40px;
+    width: 100%;
+    max-width: 100%; /* Impedir que ultrapasse a tela */
+    overflow-y: auto; /* Se o formulário for longo, a rolagem fica só aqui dentro */
+    background-color: #ffffff;
+}
+
+.form-card {
+    background-color: #ffffff;
+    padding: 20px 0; 
+    margin-top: 20px;
+    width: 100%;
+}
+
+/* --- TÍTULO PRINCIPAL --- */
+.title-section h2 {
+    color: #1a2e6b; 
+    font-size: 46px; 
+    font-weight: 800; 
     margin-bottom: 8px;
+    letter-spacing: -1px;
 }
 
-.page-subtitle {
-    color: var(--text-dark);
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 40px;
+.title-section p {
+    color: #444444;
+    font-size: 16px; 
+    font-weight: 500;
+    margin-bottom: 45px;
 }
 
-/* GRID DO FORMULÁRIO (Dois lados) */
-.cadastro-form {
-    max-width: 1100px;
-}
-
-.form-grid {
+/* --- CAMPOS DO FORMULÁRIO --- */
+.form-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 80px;
-    row-gap: 25px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-bottom: 30px;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
 }
 
 .form-group label {
-    color: #000000;
-    font-size: 18px;
-    font-weight: 700;
+    color: #000000; 
+    font-weight: 800; 
+    font-size: 18px; 
 }
 
-/* INPUTS, SELECT E TEXTAREA */
 .form-group input, 
 .form-group select, 
 .form-group textarea {
-    width: 100%;
-    padding: 16px 20px;
-    border: 1px solid var(--gray-border);
-    border-radius: 15px;
-    font-size: 16px;
-    color: #333;
+    padding: 16px 22px; 
+    border: 2px solid #ccd1d9; 
+    border-radius: 12px;
+    font-size: 16px; 
+    color: #222222;
+    font-weight: 600;
     outline: none;
     background-color: #fff;
+    width: 100%;
 }
 
 .form-group input::placeholder, 
 .form-group textarea::placeholder {
-    color: var(--gray-placeholder);
+    color: #999999;
+    font-size: 16px; 
+    font-weight: 500;
 }
 
 .form-group select {
@@ -185,73 +167,50 @@ body {
     background-repeat: no-repeat;
     background-position: right 20px center;
     background-size: 16px;
-    color: var(--gray-placeholder);
 }
 
-/* Customização do campo de descrição */
+.full-width {
+    grid-column: 1 / -1;
+}
+
 .form-group textarea {
-    height: 140px;
     resize: none;
+    height: 160px;
 }
 
-/* CONTAINER DOS BOTÕES */
+/* --- BOTÃO DE AÇÃO --- */
 .form-actions {
     display: flex;
-    justify-content: space-between;
-    margin-top: 50px;
+    justify-content: flex-end; 
+    margin-top: 40px;
 }
 
-/* ESTILO DOS BOTÕES */
 .btn {
-    padding: 14px 40px;
-    font-size: 18px;
+    padding: 18px 50px; 
+    font-size: 18px; 
     font-weight: 700;
-    border: none;
-    border-radius: 15px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: opacity 0.2s;
+    border: none;
+    transition: 0.3s;
 }
 
-.btn:hover {
-    opacity: 0.9;
-}
-
-.btn-cancelar {
-    background-color: var(--bg-dark-blue);
+.btn-confirmar, .btn-salvar {
+    background-color: #f28b0c;
     color: white;
 }
 
-.btn-salvar {
-    background-color: var(--orange-primary);
-    color: white;
+.btn-confirmar:hover, .btn-salvar:hover {
+    background-color: #d67a0a;
 }
 
-.btn-confirmar {
-    background-color: var(--orange-primary);
-    color: white;
-}
-
-/* RESPONSIVIDADE (Para telas menores ou tablets) */
-@media (max-width: 900px) {
-    .form-grid {
-        grid-template-columns: 1fr;
-        row-gap: 20px;
-    }
-    .content {
-        padding: 20px;
-    }
-    .sidebar {
-        width: 180px;
-    }
-}
-
-/* --- ADICIONADO: ESTILIZAÇÃO DO POP-UP COM SUAS VARIÁVEIS --- */
+/* --- POP-UP RE-ESTRUTURADO (CORRIGE O BUG DA LATERAL) --- */
 .popup-overlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
@@ -259,22 +218,25 @@ body {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
-    z-index: 999;
+    z-index: 9999; /* Fica por cima de absolutamente tudo sem empurrar a tela */
 }
 
+/* Quando estiver ativo, ele aparece suavemente */
 .popup-overlay.active {
     opacity: 1;
     pointer-events: auto;
 }
 
 .popup-box {
-    background-color: var(--bg-light);
-    padding: 30px 50px;
+    background-color: #ffffff;
+    padding: 35px 55px;
     border-radius: 16px;
     text-align: center;
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     transform: translateY(-20px);
     transition: transform 0.3s ease;
+    max-width: 450px;
+    width: 90%;
 }
 
 .popup-overlay.active .popup-box {
@@ -282,18 +244,18 @@ body {
 }
 
 .popup-box i {
-    color: var(--orange-primary); /* Usa o seu laranja padrão */
-    font-size: 50px;
+    color: #f28b0c;
+    font-size: 55px;
     margin-bottom: 15px;
 }
 
 .popup-box h3 {
-    color: var(--text-dark); /* Usa o seu azul escuro */
-    font-size: 22px;
-    margin-bottom: 5px;
+    color: #1a2e6b;
+    font-size: 24px;
+    margin-bottom: 8px;
 }
 
 .popup-box p {
     color: #666;
-    font-size: 14px;
+    font-size: 16px;
 }

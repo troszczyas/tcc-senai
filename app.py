@@ -5,13 +5,70 @@ import bcrypt
 app = Flask(__name__)
 app.secret_key = "senai"
 
-# conexão com banco
-conexao = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="",
-    database="almoxarifado"
-)
+# ================= CONEXÃO AUTOMÁTICA COM O BANCO =================
+
+# Lista com as senhas mais comuns usadas no SENAI para testar automaticamente
+senhas_para_testar = ["", "root", "senai", "senai123", "1234", "123456"]
+conexao = None
+
+for senha in senhas_para_testar:
+    try:
+        # Tenta conectar direto ao servidor do MySQL
+        conexao = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password=senha
+        )
+        print(f"-> Conectado com sucesso ao MySQL usando a senha: '{senha}'")
+        break
+    except mysql.connector.Error:
+        continue
+
+if not conexao:
+    raise Exception("Não foi possível conectar ao MySQL. Verifique se o serviço MySQL80 está rodando.")
+
+# Criando o banco de dados e as tabelas caso eles não existam no seu PC
+cursor = conexao.cursor()
+cursor.execute("CREATE DATABASE IF NOT EXISTS almoxarifado;")
+cursor.execute("USE almoxarifado;")
+
+# Criação automática da tabela de estoque
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS estoque (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL,
+    categoria VARCHAR(100) NOT NULL,
+    quantidade INT NOT NULL,
+    estoque_minimo INT NOT NULL,
+    preco DECIMAL(10, 2) NOT NULL,
+    descricao TEXT
+);
+""")
+
+# Criação automática da tabela de usuários (para o seu login funcionar)
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    permissao VARCHAR(50) NOT NULL
+);
+""")
+cursor.close()
+
+
+# ================= CRIAR USUÁRIO PADRÃO (PASSO 3) =================
+@app.before_request
+def criar_usuario_padrao():
+    cursor = conexao.cursor(dictionary=True)
+    cursor.execute("SELECT COUNT(*) as total FROM usuarios")
+    if cursor.fetchone()['total'] == 0:
+        # Cria a senha 'admin' criptografada
+        senha_hash = bcrypt.hashpw("admin".encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        cursor.execute("INSERT INTO usuarios (user, password, permissao) VALUES (%s, %s, %s)", ("admin", senha_hash, "admin"))
+        conexao.commit()
+        print("-> Usuário padrão criado! Login: admin | Senha: admin")
+    cursor.close()
 
 
 # ================= LOGIN =================
@@ -23,7 +80,6 @@ def login():
 
 @app.route('/logar', methods=['POST'])
 def logar():
-
     usuario = request.form['usuario']
     senha = request.form['senha']
 
@@ -35,7 +91,6 @@ def logar():
     user = cursor.fetchone()
 
     if user:
-
         senha_bd = user['password']
 
         if bcrypt.checkpw(
@@ -50,24 +105,33 @@ def logar():
     return "Login inválido"
 
 
-# ================= HOME =================
+# ================= HOME (TABELA DINÂMICA + BUSCA) =================
 
 @app.route('/home')
 def home():
-
     if 'usuario' not in session:
         return redirect('/')
 
+    # Pega o termo digitado na barra de pesquisa (se houver)
+    pesquisa = request.args.get('search', '')
+
     cursor = conexao.cursor(dictionary=True)
 
-    sql = "SELECT * FROM estoque"
-    cursor.execute(sql)
+    if pesquisa:
+        # Busca filtrando pelo nome do item ou pela categoria
+        sql = "SELECT * FROM estoque WHERE nome LIKE %s OR categoria LIKE %s"
+        cursor.execute(sql, (f"%{pesquisa}%", f"%{pesquisa}%"))
+    else:
+        # Se não houver pesquisa, traz todos os itens do estoque
+        sql = "SELECT * FROM estoque"
+        cursor.execute(sql)
 
     itens = cursor.fetchall()
 
     return render_template(
         'home.html',
-        itens=itens
+        itens=itens,
+        search_query=pesquisa
     )
 
 
@@ -75,7 +139,6 @@ def home():
 
 @app.route('/cadastrar_item')
 def cadastrar_item():
-
     if 'usuario' not in session:
         return redirect('/')
 
@@ -84,7 +147,6 @@ def cadastrar_item():
 
 @app.route('/salvar_item', methods=['POST'])
 def salvar_item():
-
     if 'usuario' not in session:
         return redirect('/')
 
@@ -122,7 +184,6 @@ def salvar_item():
 
 @app.route('/movimentacao')
 def movimentacao():
-
     if 'usuario' not in session:
         return redirect('/')
 
@@ -141,7 +202,6 @@ def movimentacao():
 
 @app.route('/movimentar', methods=['POST'])
 def movimentar():
-
     if 'usuario' not in session:
         return redirect('/')
 
@@ -160,11 +220,9 @@ def movimentar():
 
     if tipo == "entrada":
         novo = estoque_atual + quantidade
-
     else:
         if quantidade > estoque_atual:
             return "Estoque insuficiente"
-
         novo = estoque_atual - quantidade
 
     sql_update = """
@@ -183,21 +241,17 @@ def movimentar():
 
 @app.route('/cadastrar_usuario')
 def cadastrar_usuario():
-
     if 'usuario' not in session:
         return redirect('/')
 
     if session['permissao'] != 'admin':
         return "Acesso negado"
 
-    return render_template(
-        'cadastrar_usuario.html'
-    )
+    return render_template('cadastrar_usuario.html')
 
 
 @app.route('/salvar_usuario', methods=['POST'])
 def salvar_usuario():
-
     if 'usuario' not in session:
         return redirect('/')
 
@@ -241,7 +295,7 @@ def logout():
     return redirect('/')
 
 
-# ================= INICIAR =================
+# ================= INICIAR SERVIDOR =================
 
 if __name__ == '__main__':
     app.run(

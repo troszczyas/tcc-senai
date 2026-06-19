@@ -9,76 +9,89 @@
 </head>
 <body>
 
-    <header class="topbar">
-        <div class="topbar-left">
-            <i class="fa-solid fa-bars menu-toggle"></i>
-            <span class="logo-text">Almoxarifado SENAI</span>
+    <aside class="sidebar">
+        <div class="sidebar-menu-toggle">
+            <i class="fa-solid fa-bars"></i>
         </div>
-        <div class="topbar-right">
+        <nav>
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li class="active"><a href="cadastrar_item.html">Cadastrar item</a></li>
+                <li><a href="movimentacao.html">Movimentações</a></li>
+                <li><a href="cadastrar_usuario.html">Usuários</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <div class="main-content">
+        
+        <header class="header">
+            <div class="brand-align">
+                <h1>Almoxarifado SENAI</h1>
+            </div>
             <div class="user-profile">
-                <i class="fa-solid fa-circle-user user-icon"></i>
+                <i class="fa-solid fa-circle-user"></i>
                 <span class="username">admin</span>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <div class="main-container">
-        <aside class="sidebar">
-            <nav class="sidebar-menu">
-                <a href="home.html" class="menu-item">Home</a>
-                <a href="cadastrar_item.html" class="menu-item active">Cadastrar item</a>
-                <a href="movimentacao.html" class="menu-item">Movimentações</a>
-                <a href="cadastrar_usuario.html" class="menu-item">Usuários</a>
-            </nav>
-        </aside>
+        <main class="container">
+            <div class="title-section">
+                <h2>Cadastrar item</h2>
+                <p>Preencha os dados do item abaixo</p>
+            </div>
 
-        <main class="content">
-            <h1 class="page-title">Cadastrar item</h1>
-            <p class="page-subtitle">Preencha os dados do item abaixo</p>
+            <div class="form-card">
+                <form id="form-cadastro-item">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nome">Nome do item</label>
+                            <input type="text" id="nome" placeholder="Ex: parafuso 3/8" required>
+                        </div>
 
-            <form class="cadastro-form" id="form-cadastro-item">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="nome">Nome do item</label>
-                        <input type="text" id="nome" placeholder="Ex: parafuso 3/8" required>
+                        <div class="form-group">
+                            <label for="categoria">Categoria</label>
+                            <select id="categoria" required>
+                                <option value="" disabled selected>selecione a categoria</option>
+                                <option value="ferramentas">Ferramentas</option>
+                                <option value="parafusos">Parafusos/Fixadores</option>
+                                <option value="eletronicos">Eletrônicos</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="categoria">Categoria</label>
-                        <select id="categoria" required>
-                            <option value="" disabled selected>selecione a categoria</option>
-                            <option value="ferramentas">Ferramentas</option>
-                            <option value="parafusos">Parafusos/Fixadores</option>
-                            <option value="eletronicos">Eletrônicos</option>
-                        </select>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="quantidade">Quantidade</label>
+                            <input type="text" id="quantidade" placeholder="Ex: 100" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="estoque-minimo">Estoque mínimo</label>
+                            <input type="text" id="estoque-minimo" placeholder="Ex: 10" required>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="quantidade">Quantidade</label>
-                        <input type="text" id="quantidade" placeholder="Ex: 100" required>
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="descricao">Descrição</label>
+                            <textarea id="descricao" placeholder="Descreva o item.."></textarea>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="estoque-minimo">Estoque mínimo</label>
-                        <input type="text" id="estoque-minimo" placeholder="Ex: 10" required>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="preco">Preço (R$)</label>
+                            <input type="text" id="preco" placeholder="Ex: 0,00" required>
+                        </div>
                     </div>
 
-                    <div class="form-group full-width-mobile">
-                        <label for="descricao">Descrição</label>
-                        <textarea id="descricao" placeholder="Descreva o item.."></textarea>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-cancelar" id="btn-cancelar">Cancelar</button>
+                        <button type="submit" class="btn btn-confirmar">Confirmar</button>
                     </div>
-
-                    <div class="form-group">
-                        <label for="preco">Preço (R$)</label>
-                        <input type="text" id="preco" placeholder="Ex: 0,00" required>
-                    </div>
-                </div>
-
-               <div class="form-actions">
-                    <button type="button" class="btn btn-cancelar" id="btn-cancelar">Cancelar</button>
-                    <button type="submit" class="btn btn-confirmar">Confirmar</button>
-                </div>
-            </form>
+                </form>
+            </div>
         </main>
     </div>
 
@@ -95,24 +108,16 @@
         const popupSucesso = document.getElementById('popup-sucesso');
         const btnCancelar = document.getElementById('btn-cancelar');
 
-        // Evento de envio do formulário
         formItem.addEventListener('submit', function(event) {
-            // Impede a página de recarregar
             event.preventDefault(); 
-
-            // Exibe o pop-up
             popupSucesso.classList.add('active');
-
-            // Limpa o formulário após salvar
             formItem.reset();
 
-            // Esconde o pop-up automaticamente após 2.5 segundos
             setTimeout(() => {
                 popupSucesso.classList.remove('active');
             }, 2500);
         });
 
-        // Evento opcional para o botão cancelar (limpa os campos)
         btnCancelar.addEventListener('click', function() {
             if(confirm("Deseja realmente limpar os campos preenchidos?")) {
                 formItem.reset();

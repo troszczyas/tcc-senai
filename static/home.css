@@ -1,4 +1,5 @@
-/* Reset básico */
+/* --- ARQUIVO CORRIGIDO: HOME (PADRÃO MOVIMENTAÇÕES) --- */
+
 * {
     margin: 0;
     padding: 0;
@@ -7,86 +8,37 @@
 }
 
 body {
-    background-color: #f7f9fc;
-    height: 100vh;
     display: flex;
-    flex-direction: column;
+    height: 100vh;
+    background-color: #ffffff;
     overflow: hidden;
 }
 
-/* NAVBAR */
-.navbar {
-    background-color: #0d2c6c;
-    color: white;
-    height: 60px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-}
-
-.nav-left {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.menu-icon {
-    font-size: 1.5rem;
-    cursor: pointer;
-}
-
-.nav-left h2 {
-    font-size: 1.2rem;
-    font-weight: 500;
-}
-
-.user-profile {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.profile-icon {
-    font-size: 1.4rem;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 5px;
-    border-radius: 50%;
-}
-
-/* CONTAINER PRINCIPAL */
-.main-container {
-    display: flex;
-    margin-top: 60px; /* Para não ficar embaixo da navbar */
-    height: calc(100vh - 60px); /* Ocupa exatamente o espaço restante */
-    width: 100%;
-}
-
-/* SIDEBAR - CORRIGIDA E TRAVADA */
+/* --- SIDEBAR (UNIFICADA E TRAVADA EM 260PX) --- */
 .sidebar {
     width: 260px;
-    min-width: 260px; /* Impede que ela encolha se a tabela ou a tela mudar */
-    max-width: 260px; /* Impede que ela aumente */
+    min-width: 260px;
+    max-width: 260px;
     background-color: #1a2e6b;
     color: white;
     display: flex;
     flex-direction: column;
     padding-top: 20px;
-    height: 100%; /* Ocupa 100% do main-container (evita quebra com o topo de 60px) */
+    height: 100vh;
 }
 
-/* Removido o gap e o padding lateral para o botão ativo encostar perfeitamente */
-.sidebar-menu {
-    display: flex;
-    flex-direction: column;
+.sidebar-menu-toggle {
+    padding: 0 25px;
+    font-size: 24px;
+    cursor: pointer;
+    margin-bottom: 40px;
 }
 
-/* Ajustado os links para o padrão correto do seu sistema */
-.menu-item {
+.sidebar nav ul {
+    list-style: none;
+}
+
+.sidebar nav ul li a {
     display: block;
     padding: 15px 25px;
     color: #ffffff;
@@ -96,27 +48,56 @@ body {
     transition: 0.3s;
 }
 
-.menu-item:hover {
+.sidebar nav ul li a:hover {
     background-color: #152557;
-    color: white;
 }
 
-/* Botão ativo formatado idêntico ao seu mockup (Borda redonda na direita) */
-.menu-item.active {
-    background-color: #f28b0c; /* Laranja SENAI do mockup */
-    color: white;
+.sidebar nav ul li.active a {
+    background-color: #f28b0c;
     border-top-right-radius: 25px;
     border-bottom-right-radius: 25px;
-    margin-right: 15px; /* Cria o recuo elegante na lateral */
+    margin-right: 15px;
 }
 
-/* CONTEÚDO DA PÁGINA */
+/* --- CONTEÚDO PRINCIPAL --- */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+/* --- HEADER PADRONIZADO (IGUAL AO DE MOVIMENTAÇÕES) --- */
+.header {
+    background-color: #1a2e6b;
+    color: white;
+    padding: 15px 40px; /* Mesma altura e recuo das outras telas */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    font-size: 20px; /* Tamanho ajustado e elegante */
+    font-weight: 600;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.user-profile i {
+    font-size: 24px;
+}
+
+/* --- CONTEÚDO DA PÁGINA (ESTOQUE) --- */
 .content-section {
     flex: 1;
     padding: 40px;
-    overflow-y: auto;
     background-color: #ffffff;
-    border-top-left-radius: 20px; /* Curvatura charmosa da área interna branca */
 }
 
 .content-header {
@@ -124,14 +105,15 @@ body {
 }
 
 .page-title {
-    font-size: 2.2rem;
-    color: #0d2c6c;
+    font-size: 36px; /* Ajustado para bater com o padrão de títulos do sistema */
+    color: #1a2e6b;
     font-weight: 700;
+    margin-bottom: 5px;
 }
 
 .page-subtitle {
-    color: #7f8c8d;
-    font-size: 0.95rem;
+    color: #555;
+    font-size: 14px;
     margin-top: 5px;
 }
 
@@ -167,7 +149,7 @@ body {
     background-color: #1a3d82;
 }
 
-/* TABELA */
+/* TABELA RESIDENCIAL */
 .table-container {
     width: 100%;
     overflow-x: auto;
@@ -189,7 +171,6 @@ body {
     font-size: 0.95rem;
 }
 
-/* Arredondar os cantos superiores da tabela */
 .data-table th:first-child { border-top-left-radius: 12px; }
 .data-table th:last-child { border-top-right-radius: 12px; }
 
@@ -211,7 +192,6 @@ body {
     color: #64748b;
 }
 
-/* ESTILO PARA LINHA DE NÃO ENCONTRADO */
 .no-results td {
     text-align: center;
     color: #7f8c8d;
