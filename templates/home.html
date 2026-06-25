@@ -15,10 +15,10 @@
         </div>
         <nav>
             <ul>
-                <li class="active"><a href="home.html">Home</a></li>
-                <li><a href="cadastrar_item.html">Cadastrar item</a></li>
-                <li><a href="movimentacao.html">Movimentações</a></li>
-                <li><a href="cadastrar_usuario.html">Usuários</a></li>
+                <li class="active"><a href="/home">Home</a></li>
+                <li><a href="/cadastrar_item">Cadastrar item</a></li>
+                <li><a href="/movimentacao">Movimentações</a></li>
+                <li><a href="/cadastrar_usuario">Usuários</a></li>
             </ul>
         </nav>
     </aside>
@@ -28,7 +28,7 @@
         <header class="header">
             <h1>Almoxarifado SENAI</h1>
             <div class="user-profile">
-                <span class="username">admin</span>
+                <span class="username">{{ session.get('usuario', 'Usuário') }}</span>
                 <i class="profile-icon">&#128100;</i>
             </div>
         </header>
@@ -54,63 +54,47 @@
                             <th>Quantidade</th>
                             <th>Estoque mínimo</th>
                             <th>Preço</th>
-                            <th>Ações</th>
+                            <th>Foto</th>
                         </tr>
                     </thead>
                     <tbody id="tabela-itens">
+                        {% for item in itens %}
                         <tr>
-                            <td>1</td>
-                            <td>Exemplo Item A</td>
-                            <td>Ferramentas</td>
-                            <td>45</td>
-                            <td>10</td>
-                            <td>R$ 150,00</td>
-                            <td><span class="action-icons">&#9998; &#128465;</span></td>
+                            <td>item.id </td>
+                            <td>item.nome </td>
+                            <td>item.categoria </td>
+                            <td> item.quantidade </td>
+                            <td>item.estoque_minimo </td>
+                            <td>R$ item.preco </td>
+                            <td>
+                                <button type="button" class="btn-foto" onclick="abrirModal('{{ item.nome }}', '{{ item.id }}')">
+                                     Ver Foto
+                                </button>
+                            </td>
                         </tr>
+                        {% else %}
                         <tr>
-                            <td>2</td>
-                            <td>Exemplo Item B</td>
-                            <td>Equipamentos</td>
-                            <td>12</td>
-                            <td>5</td>
-                            <td>R$ 320,00</td>
-                            <td><span class="action-icons">&#9998; &#128465;</span></td>
+                            <td colspan="7" style="text-align: center; color: #777; padding: 20px;">Nenhum item localizado no estoque do MySQL.</td>
                         </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Exemplo Item C</td>
-                            <td>Consumíveis</td>
-                            <td>100</td>
-                            <td>20</td>
-                            <td>R$ 5,50</td>
-                            <td><span class="action-icons">&#9998; &#128465;</span></td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Exemplo Item D</td>
-                            <td>Segurança</td>
-                            <td>25</td>
-                            <td>8</td>
-                            <td>R$ 45,00</td>
-                            <td><span class="action-icons">&#9998; &#128465;</span></td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>Exemplo Item E</td>
-                            <td>Outros</td>
-                            <td>8</td>
-                            <td>2</td>
-                            <td>R$ 89,90</td>
-                            <td><span class="action-icons">&#9998; &#128465;</span></td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
         </main>
     </div>
 
+    <div id="modalFoto" class="modal-container">
+        <div class="modal-conteudo">
+            <span class="btn-fechar" onclick="fecharModal()">&times;</span>
+            <h3 id="modalTitulo">Nome do Item</h3>
+            <div class="modal-corpo">
+                <img id="modalImagem" src="" alt="Foto do produto" onerror="this.src='../static/img/sem-foto.png'">
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- MECANISMO DE FILTRO DA TABELA ---
+        // Mecanismo de Pesquisa na Tabela
         const inputPesquisa = document.getElementById('input-pesquisa');
         const tabela = document.getElementById('tabela-itens');
         const linhas = tabela.getElementsByTagName('tr');
@@ -135,13 +119,27 @@
             }
         });
 
-        // --- CONEXÃO DO BOTÃO ADICIONAR ITENS ---
-        const btnAdicionar = document.getElementById('btn-adicionar');
-        if (btnAdicionar) {
-            btnAdicionar.addEventListener('click', function(evento) {
-                evento.stopPropagation();
-                window.location.href = "cadastrar_item.html";
-            });
+        // Botão Adicionar
+        document.getElementById('btn-adicionar').addEventListener('click', function() {
+            window.location.href = "/cadastrar_item";
+        });
+
+        // Controladores do Pop-up de Foto
+        function abrirModal(nomeItem, idItem) {
+            document.getElementById('modalTitulo').innerText = nomeItem;
+            document.getElementById('modalImagem').src = '../static/img/' + idItem + '.png';
+            document.getElementById('modalFoto').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalFoto').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalFoto');
+            if (event.target == modal) {
+                fecharModal();
+            }
         }
     </script>
 
