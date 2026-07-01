@@ -18,10 +18,10 @@
         </div>
         <nav>
             <ul>
-                <li><a href="home.html">Home</a></li>
-                <li><a href="cadastrar_item.html">Cadastrar item</a></li>
-                <li class="active"><a href="movimentacao.html">Movimentações</a></li>
-                <li><a href="cadastrar_usuario.html">Usuários</a></li>
+                <li><a href="/home">Home</a></li>
+                <li><a href="/cadastrar_item">Cadastrar item</a></li>
+                <li class="active"><a href="/movimentacao">Movimentações</a></li>
+                <li><a href="/cadastrar_usuario">Usuários</a></li>
             </ul>
         </nav>
     </div>
@@ -32,7 +32,7 @@
             <h1>Almoxarifado SENAI</h1>
             <div class="user-profile">
                 <i class="fa-solid fa-circle-user"></i>
-                <span>admin</span>
+                <span>{{ session.get('usuario', 'admin') }}</span>
             </div>
         </header>
 
@@ -42,19 +42,21 @@
                 <p>Registre entradas e saídas de itens</p>
             </div>
 
-            <form id="form-movimentacao">
+            <form id="form-movimentacao" action="/movimentar" method="POST">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="item">Item</label>
-                        <select id="item" required>
+                        <select id="item" name="item" required>
                             <option value="" disabled selected>Selecione o item</option>
-                            <option value="1">Item Exemplo 1</option>
+                            {% for item in itens %}
+                                <option value="{{ item.id }}">ID: {{ item.id }} - {{ item.nome }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     
                     <div class="form-group">
                         <label for="tipo">Tipo</label>
-                        <select id="tipo" required>
+                        <select id="tipo" name="tipo" required>
                             <option value="" disabled selected>Selecione o tipo</option>
                             <option value="entrada">Entrada</option>
                             <option value="saida">Saída</option>
@@ -63,13 +65,13 @@
 
                     <div class="form-group">
                         <label for="quantidade">Quantidade</label>
-                        <input type="text" id="quantidade" placeholder="Ex: 10" required>
+                        <input type="number" id="quantidade" name="quantidade" min="1" placeholder="Ex: 10" required>
                     </div>
 
                     <div class="form-group">
                         <label for="data">Data</label>
                         <div class="date-input-container">
-                            <input type="text" id="data" placeholder="22/05/2026" required>
+                            <input type="text" id="data" placeholder="22/05/2026">
                             <i class="fa-regular fa-calendar-days"></i>
                         </div>
                     </div>
@@ -78,9 +80,16 @@
                 <div class="form-row">
                     <div class="form-group full-width">
                         <label for="observacao">Observação (opcional)</label>
-                        <textarea id="observacao" placeholder="Descreva a movimentação..."></textarea>
+                        <textarea id="observacao" name="observacao" placeholder="Descreva a movimentação..."></textarea>
                     </div>
                 </div>
 
                 <div class="btn-container">
-                    <button type="submit" class="btn-register">Registrar moviment
+                    <button type="submit" class="btn-register">Registrar movimentação</button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+</body>
+</html>

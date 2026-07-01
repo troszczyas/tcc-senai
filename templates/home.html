@@ -60,12 +60,12 @@
                     <tbody id="tabela-itens">
                         {% for item in itens %}
                         <tr>
-                            <td>item.id </td>
-                            <td>item.nome </td>
-                            <td>item.categoria </td>
-                            <td> item.quantidade </td>
-                            <td>item.estoque_minimo </td>
-                            <td>R$ item.preco </td>
+                            <td>{{ item.id }}</td>
+                            <td>{{ item.nome }}</td>
+                            <td>{{ item.categoria }}</td>
+                            <td>{{ item.quantidade }}</td>
+                            <td>{{ item.estoque_minimo }}</td>
+                            <td>R$ {{ item.preco }}</td>
                             <td>
                                 <button type="button" class="btn-foto" onclick="abrirModal('{{ item.nome }}', '{{ item.id }}')">
                                      Ver Foto

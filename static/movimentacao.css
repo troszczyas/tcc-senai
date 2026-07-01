@@ -14,8 +14,8 @@ body {
 /* --- SIDEBAR --- */
 .sidebar {
     width: 260px;
-    min-width: 260px; /* Impede que ela encolha se a tela ou a tabela crescer */
-    max-width: 260px; /* Impede que ela aumente */
+    min-width: 260px;
+    max-width: 260px; 
     background-color: #1a2e6b;
     color: white;
     display: flex;
@@ -130,7 +130,11 @@ body {
     font-size: 15px;
 }
 
-.form-group input, .form-group select, .form-group textarea {
+/* AJUSTE: Incluído explicitamente input[type="number"] e desativado transformações automáticas de texto */
+.form-group input[type="text"], 
+.form-group input[type="number"], 
+.form-group select, 
+.form-group textarea {
     padding: 14px 20px;
     border: 1px solid #999999;
     border-radius: 12px;
@@ -139,6 +143,7 @@ body {
     outline: none;
     background-color: #fff;
     width: 100%;
+    text-transform: none !important;
 }
 
 .form-group input::placeholder, .form-group textarea::placeholder {
