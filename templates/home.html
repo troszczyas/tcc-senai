@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Almoxarifado SENAI - HOME</title>
+    <title>Almoxarifado SENAI - Home</title>
     <link rel="stylesheet" href="../static/home.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
     <aside class="sidebar">
         <div class="sidebar-menu-toggle">
-            <span>&#9776;</span>
+            <i class="fa-solid fa-bars"></i>
         </div>
         <nav>
             <ul>
@@ -26,22 +26,30 @@
     <div class="main-content">
         
         <header class="header">
-            <h1>Almoxarifado SENAI</h1>
+            <div class="brand-align">
+                <h1>Almoxarifado SENAI</h1>
+            </div>
             <div class="user-profile">
-                <span class="username">{{ session.get('usuario', 'Usuário') }}</span>
-                <i class="profile-icon">&#128100;</i>
+                <i class="fa-solid fa-circle-user"></i>
+                <span class="username">admin</span>
             </div>
         </header>
 
         <main class="content-section">
             <div class="content-header">
-                <h1 class="page-title">Estoque</h1>
-                <p class="page-subtitle">Lista de todos os itens cadastrados</p>
+                <h2 class="page-title">Estoque Atual</h2>
+                <p class="page-subtitle">Consulte e gerencie os materiais cadastrados no almoxarifado</p>
             </div>
 
             <div class="action-bar">
-                <input type="text" id="input-pesquisa" class="search-input" placeholder="&#128269; Pesquisar item...">
-                <button id="btn-adicionar" class="btn-add">+ Adicionar Itens</button>
+                <form class="search-form" action="/home" method="GET">
+                    <input type="text" name="search" class="search-input" placeholder="Pesquisar item ou categoria..." value="{{ search_query }}">
+                </form>
+                
+                <div class="action-buttons-group" style="display: flex; flex-direction: column; gap: 10px; align-items: flex-end;">
+                    <a href="/cadastrar_item" class="btn-add">+ Adicionar item</a>
+                    <a href="/editar" class="btn-add" style="background-color: #f28b0c;">⚙️ Editar itens</a>
+                </div>
             </div>
 
             <div class="table-container">
@@ -49,85 +57,54 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Nome</th>
+                            <th>Nome do Item</th>
                             <th>Categoria</th>
                             <th>Quantidade</th>
-                            <th>Estoque mínimo</th>
-                            <th>Preço</th>
-                            <th>Foto</th>
+                            <th>Descrição</th>
+                            <th>Mídia</th>
                         </tr>
                     </thead>
-                    <tbody id="tabela-itens">
-    {% for item in itens %}
-    <tr>
-        <td>{{ item.id_produto }}</td> 
-        <td>{{ item.nome }}</td>
-        <td>{{ item.area }}</td> 
-        <td>{{ item.quantidade }}</td>
-        <td>--</td> 
-        <td>--</td> 
-        <td>
-            <button type="button" class="btn-foto" onclick="abrirModal('{{ item.nome }}', '{{ item.id_produto }}')">
-                 Ver Foto
-            </button>
-        </td>
-    </tr>
-    {% else %}
-    <tr>
-        <td colspan="7" style="text-align: center; color: #777; padding: 20px;">Nenhum item localizado no estoque do MySQL.</td>
-    </tr>
-    {% endfor %}
-</tbody>
+                    <tbody>
+                        {% if itens %}
+                            {% for item in itens %}
+                            <tr>
+                                <td>{{ item.id_produto }}</td>
+                                <td><strong>{{ item.nome }}</strong></td>
+                                <td>{{ item.area }}</td>
+                                <td>{{ item.quantidade }}</td>
+                                <td>{{ item.descricao }}</td>
+                                <td>
+                                    {% if item.link_midia %}
+                                        <button class="btn-foto" onclick="abrirModal('{{ item.nome }}', '{{ item.link_midia }}')">Ver Foto</button>
+                                    {% else %}
+                                        <span style="color: #999; font-size: 13px;">Sem foto</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr class="no-results">
+                                <td colspan="6">Nenhum item encontrado correspondente à pesquisa.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
                 </table>
             </div>
         </main>
     </div>
 
-    <div id="modalFoto" class="modal-container">
+    <div id="modalFoto" class="modal-container" onclick="fecharModalExterno(event)">
         <div class="modal-conteudo">
             <span class="btn-fechar" onclick="fecharModal()">&times;</span>
             <h3 id="modalTitulo">Nome do Item</h3>
-            <div class="modal-corpo">
-                <img id="modalImagem" src="" alt="Foto do produto" onerror="this.src='../static/img/sem-foto.png'">
-            </div>
+            <img id="modalImagem" src="" alt="Imagem do Item">
         </div>
     </div>
 
     <script>
-        // Mecanismo de Pesquisa na Tabela
-        const inputPesquisa = document.getElementById('input-pesquisa');
-        const tabela = document.getElementById('tabela-itens');
-        const linhas = tabela.getElementsByTagName('tr');
-
-        inputPesquisa.addEventListener('keyup', function() {
-            const termoPesquisa = inputPesquisa.value.toLowerCase().trim();
-
-            for (let i = 0; i < linhas.length; i++) {
-                const celulaNome = linhas[i].getElementsByTagName('td')[1];
-                const celulaCategoria = linhas[i].getElementsByTagName('td')[2];
-
-                if (celulaNome && celulaCategoria) {
-                    const textoNome = celulaNome.textContent.toLowerCase();
-                    const textoCategoria = celulaCategoria.textContent.toLowerCase();
-
-                    if (textoNome.includes(termoPesquisa) || textoCategoria.includes(termoPesquisa)) {
-                        linhas[i].style.display = "";
-                    } else {
-                        linhas[i].style.display = "none";
-                    }
-                }
-            }
-        });
-
-        // Botão Adicionar
-        document.getElementById('btn-adicionar').addEventListener('click', function() {
-            window.location.href = "/cadastrar_item";
-        });
-
-        // Controladores do Pop-up de Foto
-        function abrirModal(nomeItem, idItem) {
-            document.getElementById('modalTitulo').innerText = nomeItem;
-            document.getElementById('modalImagem').src = '../static/img/' + idItem + '.png';
+        function abrirModal(nome, url) {
+            document.getElementById('modalTitulo').innerText = nome;
+            document.getElementById('modalImagem').src = url;
             document.getElementById('modalFoto').style.display = 'flex';
         }
 
@@ -135,9 +112,8 @@
             document.getElementById('modalFoto').style.display = 'none';
         }
 
-        window.onclick = function(event) {
-            const modal = document.getElementById('modalFoto');
-            if (event.target == modal) {
+        function fecharModalExterno(event) {
+            if (event.target === document.getElementById('modalFoto')) {
                 fecharModal();
             }
         }

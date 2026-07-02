@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Almoxarifado SENAI - Editar Item</title>
+    <link rel="stylesheet" href="../static/item.css"> <link rel="stylesheet" href="../static/editar.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-menu-toggle"><i class="fa-solid fa-bars"></i></div>
+        <nav>
+            <ul>
+                <li><a href="/home">Home</a></li>
+                <li><a href="/cadastrar_item">Cadastrar item</a></li>
+                <li><a href="/movimentacao">Movimentações</a></li>
+                <li><a href="/cadastrar_usuario">Usuários</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <div class="main-content">
+        <header class="header">
+            <div class="brand-align"><h1>Almoxarifado SENAI</h1></div>
+            <div class="user-profile">
+                <i class="fa-solid fa-circle-user"></i>
+                <span class="username">admin</span>
+            </div>
+        </header>
+
+        <main class="container">
+            <div class="title-section">
+                <h2>Editar Item Existente</h2>
+                <p>Pesquise o item pelo nome e altere as informações abaixo</p>
+            </div>
+
+            <div class="form-card" style="position: relative; margin-bottom: 20px;">
+                <div class="form-group">
+                    <label for="pesquisa-item">Digite o nome do item para buscar</label>
+                    <input type="text" id="pesquisa-item" placeholder="Ex: parafuso..." autocomplete="off">
+                    <div id="sugestoes" class="autocomplete-suggestions" style="display: none;"></div>
+                </div>
+            </div>
+
+            <div class="form-card" id="card-edicao" style="display: none;">
+                <form id="form-editar-item" action="/atualizar_item" method="POST">
+                    
+                    <input type="hidden" id="item_id" name="item_id">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="categoria">Categoria / Área</label>
+                            <select id="categoria" name="categoria" required>
+                                <option value="Geral">Geral</option>
+                                <option value="Mecânica">Mecânica</option>
+                                <option value="Elétrica">Elétrica</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="preco">Preço (R$)</label>
+                            <input type="text" id="preco" name="preco" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="descricao">Descrição</label>
+                            <textarea id="descricao" name="descricao" placeholder="Nova descrição..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-cancelar" onclick="window.location.href='/home'" style="background-color: #999; color: white;">Cancelar</button>
+                        <button type="submit" class="btn btn-confirmar">Salvar Alterações</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const inputPesquisa = document.getElementById('pesquisa-item');
+        const divSugestoes = document.getElementById('sugestoes');
+        const cardEdicao = document.getElementById('card-edicao');
+
+        // Captura o que o usuário digita no campo de pesquisa
+        inputPesquisa.addEventListener('input', function() {
+            const termo = this.value;
+            if (termo.length < 2) {
+                divSugestoes.style.display = 'none';
+                return;
+            }
+
+            // Consulta a API do Flask enviando o termo digitado
+            fetch(`/api/buscar_item_edicao?nome=${termo}`)
+                .then(response => response.json())
+                .then(dados => {
+                    divSugestoes.innerHTML = '';
+                    if (dados.length > 0) {
+                        dados.forEach(item => {
+                            const div = document.createElement('div');
+                            div.classList.add('suggestion-item');
+                            div.innerText = item.nome;
+                            
+                            // Quando o usuário clica no item sugerido da lista:
+                            div.addEventListener('click', function() {
+                                // Mapeia os dados retornados para os campos do HTML
+                                document.getElementById('item_id').value = item.id;
+                                document.getElementById('categoria').value = item.categoria;
+                                document.getElementById('preco').value = item.preco;
+                                document.getElementById('descricao').value = item.descricao;
+                                
+                                inputPesquisa.value = item.nome;
+                                divSugestoes.style.display = 'none';
+                                cardEdicao.style.display = 'block'; // Torna visível o formulário de edição
+                            });
+                            divSugestoes.appendChild(div);
+                        });
+                        divSugestoes.style.display = 'block';
+                    } else {
+                        divSugestoes.style.display = 'none';
+                    }
+                })
+                .catch(erro => console.error("Erro na busca:", erro));
+        });
+
+        // Fecha a caixinha de sugestões se clicar em qualquer outra parte da tela
+        document.addEventListener('click', function(e) {
+            if (e.target !== inputPesquisa) {
+                divSugestoes.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

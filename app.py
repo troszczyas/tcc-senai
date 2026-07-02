@@ -93,17 +93,16 @@ def logar():
 
     conexao = obter_conexao()
     cursor = conexao.cursor(dictionary=True)
-    # Mudou de 'user' para 'login'
     cursor.execute("SELECT * FROM usuarios WHERE login = %s", (usuario,))
     user = cursor.fetchone()
     cursor.close()
     conexao.close()
 
     if user:
-        senha_bd = user['senha'] # Mudou de 'password' para 'senha'
+        senha_bd = user['senha']
         if bcrypt.checkpw(senha.encode('utf-8'), senha_bd.encode('utf-8')):
             session['usuario'] = usuario
-            session['permissao'] = user['role'] # Mudou de 'permissao' para 'role'
+            session['permissao'] = user['role']
             return redirect('/home')
 
     flash("Login inválido ou senha incorreta!", "error")
@@ -120,11 +119,9 @@ def home():
     cursor = conexao.cursor(dictionary=True)
 
     if pesquisa:
-        # Buscando por id_produto e area no lugar de id e categoria
         sql = "SELECT id_produto, nome, area, quantidade, descricao, link_midia FROM estoque WHERE nome LIKE %s OR area LIKE %s ORDER BY id_produto ASC"
         cursor.execute(sql, (f"%{pesquisa}%", f"%{pesquisa}%"))
     else:
-        # Buscando todas as colunas certas do seu banco
         sql = "SELECT id_produto, nome, area, quantidade, descricao, link_midia FROM estoque ORDER BY id_produto ASC"
         cursor.execute(sql)
 
@@ -175,6 +172,66 @@ def salvar_item():
     conexao.close()
     return redirect('/home')
 
+
+# ================= NOVAS ROTAS PARA EDIÇÃO DE ITENS =================
+
+@app.route('/editar')
+def editar_pagina():
+    if 'usuario' not in session:
+        return redirect('/')
+    return render_template('editar.html')
+
+
+@app.route('/api/buscar_item_edicao')
+def buscar_item_edicao():
+    if 'usuario' not in session:
+        return jsonify({'erro': 'Não autorizado'}), 401
+        
+    nome_item = request.args.get('nome', '').strip()
+    if not nome_item:
+        return jsonify([])
+
+    conexao = obter_conexao()
+    cursor = conexao.cursor(dictionary=True)
+    
+    # Executa a busca por aproximação do nome (Limita a 5 resultados na caixinha)
+    sql = "SELECT id, nome, categoria, descricao, preco FROM estoque WHERE nome LIKE %s LIMIT 5"
+    cursor.execute(sql, (f"%{nome_item}%",))
+    resultados = cursor.fetchall()
+    
+    cursor.close()
+    conexao.close()
+    return jsonify(resultados)
+
+
+@app.route('/atualizar_item', methods=['POST'])
+def atualizar_item():
+    if 'usuario' not in session:
+        return redirect('/')
+
+    item_id = request.form['item_id']
+    categoria = request.form['categoria']
+    descricao = limpar_texto(request.form.get('descricao', ''))
+    preco = float(request.form['preco'].replace(',', '.'))  # Permite que o utilizador digite com vírgula
+
+    conexao = obter_conexao()
+    cursor = conexao.cursor()
+    
+    # Atualiza as 3 colunas desejadas baseando-se no ID do produto selecionado
+    sql = """
+        UPDATE estoque 
+        SET categoria = %s, descricao = %s, preco = %s 
+        WHERE id = %s
+    """
+    cursor.execute(sql, (categoria, descricao, preco, item_id))
+    conexao.commit()
+    
+    cursor.close()
+    conexao.close()
+    return redirect('/home')
+
+
+# ================= RESTANTE DAS ROTAS ORIGINAIS =================
 
 @app.route('/movimentacao')
 def movimentacao():

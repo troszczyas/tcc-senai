@@ -1,0 +1,62 @@
+/* --- ESTILIZAÇÃO DA BARRA DE PESQUISA INTELIGENTE --- */
+
+.form-card {
+    background-color: #ffffff;
+    padding: 20px 0; 
+    margin-top: 20px;
+    width: 100%;
+}
+
+/* Container que segura o input de busca */
+.form-group {
+    position: relative;
+}
+
+/* Caixa flutuante de sugestões */
+.autocomplete-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    border: 2px solid #ccd1d9;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    max-height: 220px;
+    overflow-y: auto;
+    z-index: 9999;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    margin-top: -4px; /* Cola no input arredondado */
+}
+
+/* Cada item que aparece na busca */
+.suggestion-item {
+    padding: 14px 22px;
+    font-size: 15px;
+    color: #222222;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #f0f2f5;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+/* Efeito de passar o mouse: Destaca em Laranja SENAI */
+.suggestion-item:hover {
+    background-color: #f28b0c;
+    color: #ffffff;
+    padding-left: 28px; /* Dá um leve efeito de empurrãozinho para o lado */
+}
+
+/* Alerta visual caso o formulário estivesse escondido */
+#card-edicao {
+    animation: abrirSuave 0.3s ease-out;
+}
+
+@keyframes abrirSuave {
+    from { transform: translateY(10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
