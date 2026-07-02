@@ -58,26 +58,26 @@
                         </tr>
                     </thead>
                     <tbody id="tabela-itens">
-                        {% for item in itens %}
-                        <tr>
-                            <td>{{ item.id }}</td>
-                            <td>{{ item.nome }}</td>
-                            <td>{{ item.categoria }}</td>
-                            <td>{{ item.quantidade }}</td>
-                            <td>{{ item.estoque_minimo }}</td>
-                            <td>R$ {{ item.preco }}</td>
-                            <td>
-                                <button type="button" class="btn-foto" onclick="abrirModal('{{ item.nome }}', '{{ item.id }}')">
-                                     Ver Foto
-                                </button>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="7" style="text-align: center; color: #777; padding: 20px;">Nenhum item localizado no estoque do MySQL.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
+    {% for item in itens %}
+    <tr>
+        <td>{{ item.id_produto }}</td> 
+        <td>{{ item.nome }}</td>
+        <td>{{ item.area }}</td> 
+        <td>{{ item.quantidade }}</td>
+        <td>--</td> 
+        <td>--</td> 
+        <td>
+            <button type="button" class="btn-foto" onclick="abrirModal('{{ item.nome }}', '{{ item.id_produto }}')">
+                 Ver Foto
+            </button>
+        </td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="7" style="text-align: center; color: #777; padding: 20px;">Nenhum item localizado no estoque do MySQL.</td>
+    </tr>
+    {% endfor %}
+</tbody>
                 </table>
             </div>
         </main>

@@ -14,8 +14,8 @@ def obter_conexao():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="",  # Insira a senha do seu MySQL se houver
-        database="almoxarifado"
+        password="",  # Deixe vazio se você não usa senha no Workbench
+        database="almoxarifado_db"  # Nome exato do seu banco do script
     )
 
 # ================= FUNÇÕES AUXILIARES INTEGRAIS =================
@@ -93,16 +93,17 @@ def logar():
 
     conexao = obter_conexao()
     cursor = conexao.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM usuarios WHERE user = %s", (usuario,))
+    # Mudou de 'user' para 'login'
+    cursor.execute("SELECT * FROM usuarios WHERE login = %s", (usuario,))
     user = cursor.fetchone()
     cursor.close()
     conexao.close()
 
     if user:
-        senha_bd = user['password']
+        senha_bd = user['senha'] # Mudou de 'password' para 'senha'
         if bcrypt.checkpw(senha.encode('utf-8'), senha_bd.encode('utf-8')):
             session['usuario'] = usuario
-            session['permissao'] = user['permissao']
+            session['permissao'] = user['role'] # Mudou de 'permissao' para 'role'
             return redirect('/home')
 
     flash("Login inválido ou senha incorreta!", "error")
@@ -119,10 +120,12 @@ def home():
     cursor = conexao.cursor(dictionary=True)
 
     if pesquisa:
-        sql = "SELECT * FROM estoque WHERE nome LIKE %s OR categoria LIKE %s ORDER BY id ASC"
+        # Buscando por id_produto e area no lugar de id e categoria
+        sql = "SELECT id_produto, nome, area, quantidade, descricao, link_midia FROM estoque WHERE nome LIKE %s OR area LIKE %s ORDER BY id_produto ASC"
         cursor.execute(sql, (f"%{pesquisa}%", f"%{pesquisa}%"))
     else:
-        sql = "SELECT * FROM estoque ORDER BY id ASC"
+        # Buscando todas as colunas certas do seu banco
+        sql = "SELECT id_produto, nome, area, quantidade, descricao, link_midia FROM estoque ORDER BY id_produto ASC"
         cursor.execute(sql)
 
     itens = cursor.fetchall()
@@ -130,7 +133,6 @@ def home():
     conexao.close()
     
     return render_template('home.html', itens=itens, search_query=pesquisa)
-
 
 @app.route('/cadastrar_item')
 def cadastrar_item():
