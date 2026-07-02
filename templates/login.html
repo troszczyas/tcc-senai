@@ -3,51 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SENAI | Almoxarifado - Login</title>
-    <link rel="stylesheet" href="../static/login.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Almoxarifado SENAI - Login</title>
+    <link rel="stylesheet" href="/static/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <main class="login-section">
+        <section class="login-section">
             <div class="login-box">
-                <img src="../static/senai (1).png" alt="Logo SENAI" class="logo-img">
+                <img src="/static/logo-senai.png" alt="Logo SENAI" class="logo-img" onerror="this.style.display='none'">
                 
-                <h1 class="title">Almoxarifado</h1>
+                <h2 class="title">Almoxarifado</h2>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert" style="color: #ff4d4d; margin-bottom: 15px; font-weight: 600; font-size: 14px;">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
 
-                <form>
+                <form action="/logar" method="POST">
                     <div class="input-group">
-                        <label for="username">Usuário</label>
-                        <input type="text" id="username" placeholder="Digite sua matrícula" required>
+                        <label for="usuario">Usuário</label>
+                        <input type="text" id="usuario" name="usuario" placeholder="Digite seu usuário" required>
                     </div>
-
+                    
                     <div class="input-group">
-                        <label for="password">Senha</label>
-                        <input type="password" id="password" placeholder="Digite sua senha" required>
+                        <label for="senha">Senha</label>
+                        <input type="password" id="senha" name="senha" placeholder="Digite sua senha" required>
                     </div>
-
+                    
                     <button type="submit" class="btn-submit">Entrar</button>
                     
                     <a href="#" class="forgot-password">Esqueceu sua senha?</a>
                 </form>
             </div>
-        </main>
+        </section>
 
-        <aside class="image-section">
-            </aside>
+        <section class="image-section"></section>
     </div>
-    <script>
-        const formulario = document.querySelector('form');
-        
-        formulario.addEventListener('submit', function(evento) {
-            evento.preventDefault(); // Impede a página de recarregar
-            
-            // Redireciona para o arquivo da sua página de estoque
-            // (Ajuste o nome 'home.html' caso seu arquivo tenha outro nome)
-            window.location.href = "home.html"; 
-        });
-    </script>
 </body>
 </html>

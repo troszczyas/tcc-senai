@@ -24,7 +24,6 @@
     </aside>
 
     <div class="main-content">
-        
         <header class="header">
             <div class="brand-align">
                 <h1>Almoxarifado SENAI</h1>
@@ -107,17 +106,14 @@
             document.getElementById('modalImagem').src = url;
             document.getElementById('modalFoto').style.display = 'flex';
         }
-
         function fecharModal() {
             document.getElementById('modalFoto').style.display = 'none';
         }
-
         function fecharModalExterno(event) {
             if (event.target === document.getElementById('modalFoto')) {
                 fecharModal();
             }
         }
     </script>
-
 </body>
 </html>

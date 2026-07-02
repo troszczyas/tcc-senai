@@ -3,19 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Almoxarifado SENAI - Movimentação de Estoque</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <title>Almoxarifado SENAI - Movimentações</title>
     <link rel="stylesheet" href="../static/movimentacao.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="sidebar-menu-toggle">
-            <i class="fa-solid fa-bars"></i>
-        </div>
+    <aside class="sidebar">
+        <div class="sidebar-menu-toggle"><i class="fa-solid fa-bars"></i></div>
         <nav>
             <ul>
                 <li><a href="/home">Home</a></li>
@@ -24,72 +19,67 @@
                 <li><a href="/cadastrar_usuario">Usuários</a></li>
             </ul>
         </nav>
-    </div>
+    </aside>
 
     <div class="main-content">
-        
         <header class="header">
-            <h1>Almoxarifado SENAI</h1>
+            <div class="brand-align"><h1>Almoxarifado SENAI</h1></div>
             <div class="user-profile">
                 <i class="fa-solid fa-circle-user"></i>
-                <span>{{ session.get('usuario', 'admin') }}</span>
+                <span class="username">admin</span>
             </div>
         </header>
 
         <main class="container">
             <div class="title-section">
-                <h2>Movimentação de estoque</h2>
-                <p>Registre entradas e saídas de itens</p>
+                <h2>Registrar Movimentação</h2>
+                <p>Controle a entrada e saída de materiais no almoxarifado</p>
             </div>
 
-            <form id="form-movimentacao" action="/movimentar" method="POST">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="item">Item</label>
-                        <select id="item" name="item" required>
-                            <option value="" disabled selected>Selecione o item</option>
-                            {% for item in itens %}
-                                <option value="{{ item.id }}">ID: {{ item.id }} - {{ item.nome }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="tipo">Tipo</label>
-                        <select id="tipo" name="tipo" required>
-                            <option value="" disabled selected>Selecione o tipo</option>
-                            <option value="entrada">Entrada</option>
-                            <option value="saida">Saída</option>
-                        </select>
-                    </div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}" style="color: #ef4444; font-weight: 700; margin-bottom: 20px;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
 
-                    <div class="form-group">
-                        <label for="quantidade">Quantidade</label>
-                        <input type="number" id="quantidade" name="quantidade" min="1" placeholder="Ex: 10" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="data">Data</label>
-                        <div class="date-input-container">
-                            <input type="text" id="data" placeholder="22/05/2026">
-                            <i class="fa-regular fa-calendar-days"></i>
+            <div class="form-card">
+                <form action="/movimentar" method="POST">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="item">Selecionar Item</label>
+                            <select id="item" name="item" required>
+                                <option value="" disabled selected>Escolha um item...</option>
+                                {% for item in itens %}
+                                    <option value="{{ item.id_produto or item.id }}">{{ item.nome }} (Saldo: {{ item.quantidade }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tipo">Tipo de Operação</label>
+                            <select id="tipo" name="tipo" required>
+                                <option value="entrada">Entrada (+)</option>
+                                <option value="saida">Saída (-)</option>
+                            </select>
                         </div>
                     </div>
-                </div>
 
-                <div class="form-row">
-                    <div class="form-group full-width">
-                        <label for="observacao">Observação (opcional)</label>
-                        <textarea id="observacao" name="observacao" placeholder="Descreva a movimentação..."></textarea>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="quantidade">Quantidade</label>
+                            <input type="number" id="quantidade" name="quantidade" min="1" placeholder="Quantidade a movimentar" required>
+                        </div>
                     </div>
-                </div>
 
-                <div class="btn-container">
-                    <button type="submit" class="btn-register">Registrar movimentação</button>
-                </div>
-            </form>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-confirmar">Confirmar Movimentação</button>
+                    </div>
+                </form>
+            </div>
         </main>
     </div>
-
 </body>
 </html>

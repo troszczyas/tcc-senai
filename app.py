@@ -1,343 +1,114 @@
-import os
-import re
-import unicodedata
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
-import mysql.connector
-import bcrypt
+from flask import Flask, render_template, request, redirect, jsonify, session, flash
 
 app = Flask(__name__)
-# Chave secreta segura para gerenciar as sessões do SENAI
-app.secret_key = os.urandom(24)
+app.secret_key = 'chave_secreta_para_apresentacao_tcc'
 
-# ================= CONEXÃO COM O BANCO DE DADOS =================
-def obter_conexao():
-    return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",  # Deixe vazio se você não usa senha no Workbench
-        database="almoxarifado_db"  # Nome exato do seu banco do script
-    )
+# --- BANCO DE DADOS DESATIVADO TEMPORARIAMENTE PARA TESTES DE LAYOUT ---
+# Dados fictícios para simular o estoque do Almoxarifado SENAI
+ESTOQUE_MOCK = [
+    {"id_produto": 1, "nome": "Chave Phillips 1/4", "area": "Mecânica", "quantidade": 15, "descricao": "Ferramenta de aperto com ponta imantada.", "preco": "25.90", "link_midia": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=200"},
+    {"id_produto": 2, "nome": "Multímetro Digital", "area": "Elétrica", "quantidade": 7, "descricao": "Medidor de tensão AC/DC e corrente.", "preco": "89.90", "link_midia": ""},
+    {"id_produto": 3, "nome": "Parafuso Sextavado M8", "area": "Geral", "quantidade": 120, "descricao": "Fixador zincado para estruturas metálicas.", "preco": "0.50", "link_midia": ""},
+    {"id_produto": 4, "nome": "Alicate Universal 8", "area": "Mecânica", "quantidade": 10, "descricao": "Alicate isolado 1000V de alta resistência.", "preco": "45.00", "link_midia": ""}
+]
 
-# ================= FUNÇÕES AUXILIARES INTEGRAIS =================
-
-def limpar_texto(texto):
-    if not texto:
-        return ""
-    nfkd_form = unicodedata.normalize('NFKD', texto)
-    texto_sem_acento = "".join([c for c in nfkd_form if not unicodedata.combining(c)])
-    texto_limpo = texto_sem_acento.strip().lower()
-    return texto_limpo.capitalize()
-
-def gerar_proximo_id(categoria):
-    prefixos = {'Geral': '0', 'Mecânica': '1', 'Elétrica': '2'}
-    prefixo = prefixos.get(categoria, '0')
-    
-    conexao = obter_conexao()
-    cursor = conexao.cursor(dictionary=True)
-    
-    # Cast para garantir que a busca funcione textualmente
-    cursor.execute("""
-        SELECT id FROM estoque 
-        WHERE CAST(id AS CHAR) LIKE %s 
-        ORDER BY id ASC
-    """, (prefixo + '%',))
-    
-    ids_existentes = [int(row['id']) for row in cursor.fetchall()]
-    cursor.close()
-    conexao.close()
-    
-    inicio_sequencia = int(prefixo + "0001")
-    proximo_numero = inicio_sequencia
-    while proximo_numero in ids_existentes:
-        proximo_numero += 1
-        
-    return proximo_numero
-
-# ================= CRIAR USUÁRIO PADRÃO AUTOMATICAMENTE =================
-@app.before_request
-def criar_usuario_padrao():
-    if request.endpoint == 'static':
-        return
-        
-    try:
-        conexao = obter_conexao()
-        cursor = conexao.cursor(dictionary=True)
-        cursor.execute("SELECT COUNT(*) as total FROM usuarios")
-        result = cursor.fetchone()
-        
-        if result and result['total'] == 0:
-            senha_hash = bcrypt.hashpw("admin".encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-            cursor.execute("""
-                INSERT INTO usuarios (user, password, permissao) 
-                VALUES (%s, %s, %s)
-            """, ("admin", senha_hash, "admin"))
-            conexao.commit()
-            print("-> Usuário padrão criado! Login: admin | Senha: admin")
-        cursor.close()
-        conexao.close()
-    except Exception as e:
-        print(f"Aviso na inicialização do banco: {e}")
-
-
-# ================= ROTAS DO SISTEMA =================
-
+# ROTA 1: TELA DE LOGIN
 @app.route('/')
 def login():
     return render_template('login.html')
 
-
+# ROTA 2: PROCESSAR O LOGIN (Ignora o banco e deixa passar direto)
 @app.route('/logar', methods=['POST'])
 def logar():
-    usuario = request.form['usuario']
-    senha = request.form['senha']
+    usuario = request.form.get('usuario')
+    senha = request.form.get('senha')
+    
+    # Simulação de login bem-sucedido
+    session['usuario'] = "admin"
+    session['permissao'] = "admin"
+    return redirect('/home')
 
-    conexao = obter_conexao()
-    cursor = conexao.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM usuarios WHERE login = %s", (usuario,))
-    user = cursor.fetchone()
-    cursor.close()
-    conexao.close()
-
-    if user:
-        senha_bd = user['senha']
-        if bcrypt.checkpw(senha.encode('utf-8'), senha_bd.encode('utf-8')):
-            session['usuario'] = usuario
-            session['permissao'] = user['role']
-            return redirect('/home')
-
-    flash("Login inválido ou senha incorreta!", "error")
-    return redirect('/')
-
-
+# ROTA 3: TELA HOME (Mostra a tabela de estoque com busca simulada)
 @app.route('/home')
 def home():
-    if 'usuario' not in session:
-        return redirect('/')
-
-    pesquisa = request.args.get('search', '').strip()
-    conexao = obter_conexao()
-    cursor = conexao.cursor(dictionary=True)
-
-    if pesquisa:
-        sql = "SELECT id_produto, nome, area, quantidade, descricao, link_midia FROM estoque WHERE nome LIKE %s OR area LIKE %s ORDER BY id_produto ASC"
-        cursor.execute(sql, (f"%{pesquisa}%", f"%{pesquisa}%"))
-    else:
-        sql = "SELECT id_produto, nome, area, quantidade, descricao, link_midia FROM estoque ORDER BY id_produto ASC"
-        cursor.execute(sql)
-
-    itens = cursor.fetchall()
-    cursor.close()
-    conexao.close()
+    search_query = request.args.get('search', '').lower()
     
-    return render_template('home.html', itens=itens, search_query=pesquisa)
+    # Se o usuário pesquisar algo, filtramos a nossa lista simulada
+    if search_query:
+        itens_filtrados = [
+            item for item in ESTOQUE_MOCK 
+            if search_query in item['nome'].lower() or search_query in item['area'].lower()
+        ]
+    else:
+        itens_filtrados = ESTOQUE_MOCK
 
+    return render_template('home.html', itens=itens_filtrados, search_query=request.args.get('search', ''))
+
+# ROTA 4: TELA DE CADASTRAR ITEM
 @app.route('/cadastrar_item')
 def cadastrar_item():
-    if 'usuario' not in session:
-        return redirect('/')
     return render_template('cadastrar_item.html')
 
-
+# ACTION DO CADASTRO DE ITEM (Simula o salvamento)
 @app.route('/salvar_item', methods=['POST'])
 def salvar_item():
-    if 'usuario' not in session:
-        return redirect('/')
-
-    nome = limpar_texto(request.form['nome'])
-    categoria = request.form['categoria']
-    quantidade = int(request.form['quantidade'])
-    minimo = int(request.form['minimo'])
-    descricao = limpar_texto(request.form.get('descricao', ''))
-    preco = float(request.form['preco'])
-
-    conexao = obter_conexao()
-    cursor = conexao.cursor(dictionary=True)
-    
-    cursor.execute("SELECT * FROM estoque WHERE nome = %s AND categoria = %s", (nome, categoria))
-    produto_existente = cursor.fetchone()
-
-    if produto_existente:
-        nova_qtd = produto_existente['quantidade'] + quantidade
-        cursor.execute("UPDATE estoque SET quantidade = %s WHERE id = %s", (nova_qtd, produto_existente['id']))
-    else:
-        id_customizado = gerar_proximo_id(categoria)
-        sql = """
-            INSERT INTO estoque (id, nome, categoria, quantidade, estoque_minimo, preco, descricao)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """
-        cursor.execute(sql, (id_customizado, nome, categoria, quantidade, minimo, preco, descricao))
-
-    conexao.commit()
-    cursor.close()
-    conexao.close()
+    flash('Item cadastrado com sucesso! (Modo de Simulação)', 'success')
     return redirect('/home')
 
-
-# ================= NOVAS ROTAS PARA EDIÇÃO DE ITENS =================
-
-@app.route('/editar')
-def editar_pagina():
-    if 'usuario' not in session:
-        return redirect('/')
-    return render_template('editar.html')
-
-
-@app.route('/api/buscar_item_edicao')
-def buscar_item_edicao():
-    if 'usuario' not in session:
-        return jsonify({'erro': 'Não autorizado'}), 401
-        
-    nome_item = request.args.get('nome', '').strip()
-    if not nome_item:
-        return jsonify([])
-
-    conexao = obter_conexao()
-    cursor = conexao.cursor(dictionary=True)
-    
-    # Executa a busca por aproximação do nome (Limita a 5 resultados na caixinha)
-    sql = "SELECT id, nome, categoria, descricao, preco FROM estoque WHERE nome LIKE %s LIMIT 5"
-    cursor.execute(sql, (f"%{nome_item}%",))
-    resultados = cursor.fetchall()
-    
-    cursor.close()
-    conexao.close()
-    return jsonify(resultados)
-
-
-@app.route('/atualizar_item', methods=['POST'])
-def atualizar_item():
-    if 'usuario' not in session:
-        return redirect('/')
-
-    item_id = request.form['item_id']
-    categoria = request.form['categoria']
-    descricao = limpar_texto(request.form.get('descricao', ''))
-    preco = float(request.form['preco'].replace(',', '.'))  # Permite que o utilizador digite com vírgula
-
-    conexao = obter_conexao()
-    cursor = conexao.cursor()
-    
-    # Atualiza as 3 colunas desejadas baseando-se no ID do produto selecionado
-    sql = """
-        UPDATE estoque 
-        SET categoria = %s, descricao = %s, preco = %s 
-        WHERE id = %s
-    """
-    cursor.execute(sql, (categoria, descricao, preco, item_id))
-    conexao.commit()
-    
-    cursor.close()
-    conexao.close()
-    return redirect('/home')
-
-
-# ================= RESTANTE DAS ROTAS ORIGINAIS =================
-
+# ROTA 5: TELA DE MOVIMENTAÇÕES (Preenche o select com os itens simulados)
 @app.route('/movimentacao')
 def movimentacao():
-    if 'usuario' not in session:
-        return redirect('/')
+    return render_template('movimentacao.html', itens=ESTOQUE_MOCK)
 
-    conexao = obter_conexao()
-    cursor = conexao.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM estoque ORDER BY id ASC")
-    itens = cursor.fetchall()
-    cursor.close()
-    conexao.close()
-
-    return render_template('movimentacao.html', itens=itens)
-
-
+# ACTION DA MOVIMENTAÇÃO (Simula a entrada/saída)
 @app.route('/movimentar', methods=['POST'])
 def movimentar():
-    if 'usuario' not in session:
-        return redirect('/')
+    flash('Movimentação registrada com sucesso! (Modo de Simulação)', 'success')
+    return redirect('/movimentacao')
 
-    item_id = request.form['item']
-    quantidade = int(request.form['quantidade'])
-    tipo = request.form['tipo']
+# ROTA 6: TELA DE EDITAR ITENS
+@app.route('/editar')
+def editar():
+    return render_template('editar.html')
 
-    conexao = obter_conexao()
-    cursor = conexao.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM estoque WHERE id = %s", (item_id,))
-    produto = cursor.fetchone()
+# API DE BUSCA DO AUTOCOMPLETE (A mágica da caixinha de busca inteligente)
+@app.route('/api/buscar_item_edicao')
+def buscar_item_edicao():
+    termo = request.args.get('nome', '').lower()
+    
+    # Procura na nossa lista simulada itens que começam ou contém o texto digitado
+    resultados = []
+    if len(termo) >= 2:
+        for item in ESTOQUE_MOCK:
+            if termo in item['nome'].lower():
+                resultados.append({
+                    "id": item['id_produto'],
+                    "nome": item['nome'],
+                    "categoria": item['area'],
+                    "preco": item['preco'],
+                    "descricao": item['descricao']
+                })
+                
+    return jsonify(resultados)
 
-    if not produto:
-        cursor.close()
-        conexao.close()
-        flash("Produto não localizado!", "error")
-        return redirect('/movimentacao')
-
-    estoque_atual = produto['quantidade']
-
-    if tipo == "entrada":
-        novo_total = estoque_atual + quantidade
-    else:
-        if quantidade > estoque_atual:
-            cursor.close()
-            conexao.close()
-            flash("Quantidade solicitada é superior ao estoque disponível!", "error")
-            return redirect('/movimentacao')
-        novo_total = estoque_atual - quantidade
-
-    cursor.execute("UPDATE estoque SET quantidade = %s WHERE id = %s", (novo_total, item_id))
-    conexao.commit()
-    cursor.close()
-    conexao.close()
-
+# ACTION DE ATUALIZAR ITEM EDIÇÃO (Simula o update)
+@app.route('/atualizar_item', methods=['POST'])
+def atualizar_item():
+    flash('Alterações do item salvas com sucesso! (Modo de Simulação)', 'success')
     return redirect('/home')
 
-
+# ROTA 7: TELA DE CADASTRAR USUÁRIO
 @app.route('/cadastrar_usuario')
 def cadastrar_usuario():
-    if 'usuario' not in session:
-        return redirect('/')
-
-    if session.get('permissao') != 'admin':
-        return "Acesso negado - Permissão insuficiente."
-
     return render_template('cadastrar_usuario.html')
 
-
+# ACTION DE CADASTRAR USUÁRIO (Simula a criação)
 @app.route('/salvar_usuario', methods=['POST'])
 def salvar_usuario():
-    if 'usuario' not in session:
-        return redirect('/')
+    flash('Novo usuário cadastrado com sucesso! (Modo de Simulação)', 'success')
+    return redirect('/cadastrar_usuario')
 
-    if session.get('permissao') != 'admin':
-        return "Acesso negado - Permissão insuficiente."
-
-    usuario = request.form['usuario']
-    senha = request.form['senha']
-    permissao = request.form['permissao']
-
-    senha_hash = bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-
-    conexao = obter_conexao()
-    cursor = conexao.cursor()
-    sql = "INSERT INTO usuarios (user, password, permissao) VALUES (%s, %s, %s)"
-    
-    try:
-        cursor.execute(sql, (usuario, senha_hash, permissao))
-        conexao.commit()
-    except Exception as e:
-        print(f"Erro ao salvar usuário: {e}")
-        flash("Este nome de usuário já existe!", "error")
-
-    cursor.close()
-    conexao.close()
-    return redirect('/')
-
-
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect('/')
-
-
+# --- INICIALIZAÇÃO DO SERVIDOR ---
 if __name__ == '__main__':
-    app.run(
-        host='0.0.0.0',
-        port=5000,
-        debug=True
-    )
+    # Rodando em modo de debug para atualizar automático ao salvar alterações
+    app.run(debug=True, port=5000)
