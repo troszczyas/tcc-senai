@@ -1,0 +1,98 @@
+-- 1. Criação do Banco de Dados
+CREATE DATABASE IF NOT EXISTS almoxarifado_db
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
+USE almoxarifado_db;
+
+-- 2. Tabela de Estoque / Produtos
+CREATE TABLE IF NOT EXISTS estoque (
+    id_produto VARCHAR(5) NOT NULL,
+    nome VARCHAR(100) NOT NULL,
+    area VARCHAR(50) NOT NULL,
+    quantidade INT NOT NULL DEFAULT 0,
+    descricao VARCHAR(255) NULL,
+    link_midia VARCHAR(500) NULL,
+    PRIMARY KEY (id_produto)
+) ENGINE=InnoDB;
+
+-- 3. Tabela de Usuários (Configurada para Hashes de 60 caracteres do Bcrypt)
+CREATE TABLE IF NOT EXISTS usuarios (
+    login VARCHAR(50) NOT NULL,
+    senha VARCHAR(255) NOT NULL, -- Espaço seguro de 255 caracteres
+    status VARCHAR(20) NOT NULL DEFAULT 'ativo',
+    role VARCHAR(20) NOT NULL DEFAULT 'user',
+    PRIMARY KEY (login)
+) ENGINE=InnoDB;
+
+-- 4. Tabela de Configurações Administrativas
+CREATE TABLE IF NOT EXISTS config_admin (
+    id INT AUTO_INCREMENT,
+    chave_secundaria VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB;
+
+-- 5. Tabela de Histórico / Logs do Sistema
+CREATE TABLE IF NOT EXISTS historico_logs (
+    id INT AUTO_INCREMENT,
+    usuario VARCHAR(50) NOT NULL,
+    acao VARCHAR(50) NOT NULL,
+    detalhe TEXT NOT NULL,
+    data_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB;
+
+-- -----------------------------------------------------------------------------
+-- INSERÇÃO DE REGISTROS INICIAIS OBRIGATÓRIOS
+-- -----------------------------------------------------------------------------
+
+-- Define a Chave Mestra para o Painel Administrativo
+-- Altere 'SUA_CHAVE_MESTRA_AQUI' para o código que você usa na verificação secundária
+INSERT INTO config_admin (chave_secundaria) 
+VALUES ('SENAI');
+
+-- Garante a remoção de qualquer usuário antigo 'admin' para evitar conflitos
+DELETE FROM usuarios WHERE login = 'admin';
+
+-- Criação do Administrador Padrão
+-- O hash abaixo corresponde estritamente à senha em texto puro: admin
+INSERT INTO usuarios (login, senha, status, role) #senha = admin
+VALUES ('admin', '123', 'ativo', 'admin');
+
+INSERT INTO usuarios (login, senha, status, role) #senha = 123
+VALUES ('Tati', '777', 'ativo', 'admin');
+
+DELETE FROM usuarios WHERE login IN ('admin', 'Tati', 'Ale', 'Roger', 'Duda');
+DELETE FROM usuarios WHERE login = 'Alessandra';
+DELETE FROM usuarios WHERE login = 'Yasmin';
+
+USE almoxarifado_db;
+
+UPDATE usuarios 
+SET senha = 'Roger'
+WHERE login = 'admin';
+
+INSERT INTO usuarios (login, senha, status, role) #Adiciona usuários; senha: Slumber
+VALUES ('Ale', '456','ativo', 'user');
+INSERT INTO usuarios (login, senha, status, role) #Adiciona usuários; senha: Slumber
+VALUES ('Roger', '000', 'ativo', 'user');
+INSERT INTO usuarios (login, senha, status, role) #Adiciona usuários; senha: Slumber
+VALUES ('Duda', '789', 'ativo', 'user');
+
+INSERT INTO estoque (id_produto, nome, area, quantidade, descricao, link_midia) #Adiciona itens
+VALUES ('00001', 'Alicate', 'Geral', 10, 'Ferramenta manual usada para segurar, cortar, dobrar e apertar materiais', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS66xbAeYwltYSUHqGq4qKWALJX3lkY1ojqbRLkKs82Yw&s=10');
+INSERT INTO estoque (id_produto, nome, area, quantidade, descricao, link_midia) #Adiciona itens
+VALUES ('10001', 'Pregos', 'Mecânica', 200, 'Peças metálicas usadas para fixar materiais, principalmente madeira.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuleVPCTMLQEhf4lkkzlW9AEMXDfDEqw4RAwsZjdZ-jw&s=10');
+INSERT INTO estoque (id_produto, nome, area, quantidade, descricao, link_midia) #Adiciona itens
+VALUES ('10002', 'Parafusos', 'Mecânica', 200, 'Peças metálicas usadas para unir e fixar materiais.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlm_v8Khvn-wORVgWlbuepAl0Urz62I7pJCK2UQ3-nnQ&s=10');
+INSERT INTO estoque (id_produto, nome, area, quantidade, descricao, link_midia) #Adiciona itens
+VALUES ('20001', 'Serrote', 'Manual', 2, 'Ferramenta manual usada para cortar madeira.', 'https://www.incorzul.com.br/serrote-profissional-22-pol-100112-paraboni?srsltid=AfmBOooLCrh57Y6HbgqBUnunnwkgjC1MZx84gRXzzrK4Qq5dPWd6_mLa');
+INSERT INTO estoque (id_produto, nome, area, quantidade, descricao, link_midia) #Adiciona itens
+VALUES ('00002', 'Chave philips', 'Geral', 7, 'Ferramenta manual usada para apertar e soltar parafusos de cabeça cruzada.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMOMqwTSGR4S2soHpfyq7s5czjFTB6h6zBHHycqd2ZRg&s=10');
+
+SELECT * FROM estoque;
+SELECT * FROM config_admin;
+SELECT * FROM historico_logs;
+SELECT * FROM Usuarios;
+
+COMMIT;
