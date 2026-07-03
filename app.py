@@ -8,7 +8,6 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
 # ================= ESTOQUE E USUÁRIOS FICTÍCIOS (MOCK) =================
-# Atualizado com a coluna "preco" para os itens padrão do SENAI
 ESTOQUE_MOCK = [
     {"id_produto": "00001", "nome": "Alicate", "area": "Geral", "quantidade": 10, "descricao": "Ferramenta manual usada para segurar, cortar, dobrar e apertar materiais.", "preco": 35.90, "link_midia": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS66xbAeYwltYSUHqGq4qKWALJX3lkY1ojqbRLkKs82Yw&s=10"},
     {"id_produto": "10001", "nome": "Pregos", "area": "Mecânica", "quantidade": 200, "descricao": "Peças metálicas usadas para fixar materiais, principalmente madeira.", "preco": 0.15, "link_midia": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuleVPCTMLQEhf4lkkzlW9AEMXDfDEqw4RAwsZjdZ-jw&s=10"},
@@ -29,7 +28,7 @@ def obter_conexao():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="",  # Deixe vazio se você não usa senha no Workbench
+        password="",  
         database="almoxarifado_db"
     )
 
@@ -97,7 +96,6 @@ def logar():
                 session['permissao'] = user['role']
                 return redirect('/home')
     except Exception:
-        # Modo de Simulação Inteligente (Caso o banco de dados esteja offline)
         user_lower = usuario.lower()
         if user_lower in USUARIOS_MOCK and senha == USUARIOS_MOCK[user_lower]['senha']:
             session['usuario'] = usuario
@@ -119,7 +117,6 @@ def home():
         conexao = obter_conexao()
         cursor = conexao.cursor(dictionary=True)
 
-        # 1. Tenta buscar incluindo a coluna preco do banco real (100% corrigido sem 'quantity')
         if pesquisa:
             sql = """
                 SELECT id_produto, nome, area, quantidade, preco, descricao, link_midia 
@@ -129,7 +126,6 @@ def home():
             try:
                 cursor.execute(sql, (f"%{pesquisa}%", f"%{pesquisa}%"))
             except Exception:
-                # Caso a coluna preco não exista fisicamente no seu MySQL atual, roda o fallback sem ela
                 sql = "SELECT id_produto, nome, area, quantidade, descricao, link_midia FROM estoque WHERE nome LIKE %s OR area LIKE %s ORDER BY id_produto ASC"
                 cursor.execute(sql, (f"%{pesquisa}%", f"%{pesquisa}%"))
         else:
@@ -140,7 +136,6 @@ def home():
 
         itens = cursor.fetchall()
         
-        # Injeta um preço simulado por amostragem caso a coluna 'preco' veio ausente do MySQL físico
         for item in itens:
             if 'preco' not in item or item['preco'] is None:
                 mock_correspondente = next((m for m in ESTOQUE_MOCK if m["id_produto"] == item["id_produto"]), None)
@@ -149,7 +144,6 @@ def home():
         cursor.close()
         conexao.close()
     except Exception:
-        # Fallback total para o Modo Simulação offline se tudo falhar
         if pesquisa:
             itens = [item for item in ESTOQUE_MOCK if pesquisa.lower() in item['nome'].lower() or pesquisa.lower() in item['area'].lower()]
         else:
@@ -214,7 +208,6 @@ def movimentacao():
         cursor.execute("SELECT * FROM estoque ORDER BY id_produto ASC")
         itens = cursor.fetchall()
         
-        # Garante preço preenchido aqui também para evitar erros de renderização
         for item in itens:
             if 'preco' not in item or item['preco'] is None:
                 item['preco'] = 10.00
@@ -357,15 +350,16 @@ def salvar_usuario():
 
     try:
         conexao = obter_conexao()
-        cursor = mysql.connector.connect().cursor()
+        cursor = conexao.cursor()
         sql = "INSERT INTO usuarios (login, senha, status, role) VALUES (%s, %s, %s, %s)"
         cursor.execute(sql, (usuario, senha, 'ativo', permissao))
         conexao.commit()
         cursor.close()
         conexao.close()
-    except Exception as e:
-        print(f"Erro ao salvar usuário (Simulado): {e}")
         flash("Usuário cadastrado com sucesso!", "success")
+    except Exception as e:
+        print(f"Erro ao salvar usuário: {e}")
+        flash("Usuário cadastrado com sucesso! (Modo Simulação)", "success")
 
     return redirect('/home')
 
