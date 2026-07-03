@@ -11,13 +11,11 @@
 
     <aside class="sidebar">
         <div class="sidebar-menu-toggle"><i class="fa-solid fa-bars"></i></div>
-        <nav>
-            <ul>
-                <li><a href="/home">Home</a></li>
-                <li><a href="/cadastrar_item">Cadastrar item</a></li>
-                <li><a href="/movimentacao">Movimentações</a></li>
-                <li class="active"><a href="/cadastrar_usuario">Usuários</a></li>
-            </ul>
+        <nav class="sidebar-menu">
+            <a href="/home" class="menu-item">Home</a>
+            <a href="/cadastrar_item" class="menu-item">Cadastrar item</a>
+            <a href="/movimentacao" class="menu-item">Movimentações</a>
+            <a href="/cadastrar_usuario" class="menu-item active">Usuários</a>
         </nav>
     </aside>
 
@@ -37,9 +35,9 @@
             </div>
 
             {% with messages = get_flashed_messages(with_categories=true) %}
-                if messages
+                {% if messages %}
                     {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}" style="color: #ef4444; font-weight: 700; margin-bottom: 20px;">
+                        <div class="alert alert-{{ category }}" style="color: #ef4444; font-weight: 700; margin-bottom: 20px; font-family: 'Poppins', sans-serif;">
                             {{ message }}
                         </div>
                     {% endfor %}
@@ -69,8 +67,8 @@
                         </div>
                     </div>
 
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-salvar">Cadastrar Usuário</button>
+                    <div class="btn-container">
+                        <button type="submit" class="btn-save">Cadastrar Usuário</button>
                     </div>
                 </form>
             </div>

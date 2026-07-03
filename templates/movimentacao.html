@@ -4,20 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Almoxarifado SENAI - Movimentações</title>
-    <link rel="stylesheet" href="../static/movimentacao.css">
+    <link rel="stylesheet" href="../static/usuario.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
     <aside class="sidebar">
         <div class="sidebar-menu-toggle"><i class="fa-solid fa-bars"></i></div>
-        <nav>
-            <ul>
-                <li><a href="/home">Home</a></li>
-                <li><a href="/cadastrar_item">Cadastrar item</a></li>
-                <li class="active"><a href="/movimentacao">Movimentações</a></li>
-                <li><a href="/cadastrar_usuario">Usuários</a></li>
-            </ul>
+        <nav class="sidebar-menu">
+            <a href="/home" class="menu-item">Home</a>
+            <a href="/cadastrar_item" class="menu-item">Cadastrar item</a>
+            <a href="/movimentacao" class="menu-item active">Movimentações</a>
+            <a href="/cadastrar_usuario" class="menu-item">Usuários</a>
         </nav>
     </aside>
 
@@ -32,14 +30,14 @@
 
         <main class="container">
             <div class="title-section">
-                <h2>Registrar Movimentação</h2>
-                <p>Controle a entrada e saída de materiais no almoxarifado</p>
+                <h2>Movimentação de Estoque</h2>
+                <p>Registre a entrada ou saída de materiais do almoxarifado</p>
             </div>
 
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}" style="color: #ef4444; font-weight: 700; margin-bottom: 20px;">
+                        <div class="alert alert-{{ category }}" style="color: #ef4444; font-weight: 700; margin-bottom: 20px; font-family: 'Poppins', sans-serif;">
                             {{ message }}
                         </div>
                     {% endfor %}
@@ -52,17 +50,18 @@
                         <div class="form-group">
                             <label for="item">Selecionar Item</label>
                             <select id="item" name="item" required>
-                                <option value="" disabled selected>Escolha um item...</option>
+                                <option value="" disabled selected>Selecione um produto...</option>
                                 {% for item in itens %}
-                                    <option value="{{ item.id_produto or item.id }}">{{ item.nome }} (Saldo: {{ item.quantidade }})</option>
+                                    <option value="{{ item.id_produto }}">{{ item.nome }} (Qtd Atual: {{ item.quantidade }})</option>
                                 {% endfor %}
                             </select>
                         </div>
+
                         <div class="form-group">
-                            <label for="tipo">Tipo de Operação</label>
+                            <label for="tipo">Tipo de Movimentação</label>
                             <select id="tipo" name="tipo" required>
-                                <option value="entrada">Entrada (+)</option>
-                                <option value="saida">Saída (-)</option>
+                                <option value="entrada">Entrada (Abastecimento)</option>
+                                <option value="saida">Saída (Retirada)</option>
                             </select>
                         </div>
                     </div>
@@ -70,12 +69,12 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="quantidade">Quantidade</label>
-                            <input type="number" id="quantidade" name="quantidade" min="1" placeholder="Quantidade a movimentar" required>
+                            <input type="number" id="quantidade" name="quantidade" min="1" placeholder="Ex: 10" required>
                         </div>
                     </div>
 
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-confirmar">Confirmar Movimentação</button>
+                    <div class="btn-container">
+                        <button type="submit" class="btn-save">Confirmar Movimentação</button>
                     </div>
                 </form>
             </div>

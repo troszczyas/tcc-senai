@@ -97,7 +97,7 @@ def logar():
                 session['permissao'] = user['role']
                 return redirect('/home')
     except Exception:
-        # Modo de Simulação Inteligente (Caso o banco de dados esteja offline)
+        # Modo de Simulação Inteligente (Caso o banco de dados esteja offline/erro 2003)
         user_lower = usuario.lower()
         if user_lower in USUARIOS_MOCK and senha == USUARIOS_MOCK[user_lower]['senha']:
             session['usuario'] = usuario
@@ -121,20 +121,30 @@ def home():
 
         if pesquisa:
             sql = """
-                SELECT id_produto, nome, area, quantidade, descricao, link_midia 
+                SELECT id_produto, nome, area, quantity as quantidade, descricao, link_midia 
                 FROM estoque WHERE nome LIKE %s OR area LIKE %s 
                 ORDER BY id_produto ASC
             """
-            cursor.execute(sql, (f"%{pesquisa}%", f"%{pesquisa}%"))
+            # Tratamento caso seu banco use o nome correto
+            try:
+                cursor.execute(sql, (f"%{pesquisa}%", f"%{pesquisa}%"))
+            except Exception:
+                sql = """
+                    SELECT id_produto, nome, area, quantidade, descricao, link_midia 
+                    FROM estoque WHERE nome LIKE %s OR area LIKE %s 
+                    ORDER BY id_produto ASC
+                """
+                cursor.execute(sql, (f"%{pesquisa}%", f"%{pesquisa}%"))
         else:
-            sql = "SELECT id_produto, nome, area, quantidade, descricao, link_midia FROM estoque ORDER BY id_produto ASC"
-            cursor.execute(sql)
+            try:
+                cursor.execute("SELECT id_produto, nome, area, quantidade, descricao, link_midia FROM estoque ORDER BY id_produto ASC")
+            except Exception:
+                cursor.execute("SELECT id_produto, nome, area, quantidade, descricao, link_midia FROM estoque ORDER BY id_produto ASC")
 
         itens = cursor.fetchall()
         cursor.close()
         conexao.close()
     except Exception:
-        # Fallback offline usando os dados do Script SQL fornecido
         if pesquisa:
             itens = [item for item in ESTOQUE_MOCK if pesquisa.lower() in item['nome'].lower() or pesquisa.lower() in item['area'].lower()]
         else:
@@ -182,7 +192,7 @@ def salvar_item():
         cursor.close()
         conexao.close()
     except Exception:
-        flash("Item salvo ficticiamente no layout (Modo Simulação)", "success")
+        flash("Item salvos ficticiamente no layout (Modo Simulação)", "success")
 
     return redirect('/home')
 
