@@ -4,116 +4,152 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Almoxarifado SENAI - Home</title>
-    <link rel="stylesheet" href="../static/home.css">
+    <link rel="stylesheet" href="../static/usuario.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Estilos da caixinha (Modal) que vai abrir a foto */
+        .modal-foto {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-conteudo {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .modal-conteudo img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            object-fit: contain;
+            margin-bottom: 15px;
+        }
+        .btn-fechar {
+            background-color: #1a2e6b;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
 </head>
 <body>
 
     <aside class="sidebar">
-        <div class="sidebar-menu-toggle">
-            <i class="fa-solid fa-bars"></i>
-        </div>
-        <nav>
-            <ul>
-                <li class="active"><a href="/home">Home</a></li>
-                <li><a href="/cadastrar_item">Cadastrar item</a></li>
-                <li><a href="/movimentacao">Movimentações</a></li>
-                <li><a href="/cadastrar_usuario">Usuários</a></li>
-            </ul>
+        <div class="sidebar-menu-toggle"><i class="fa-solid fa-bars"></i></div>
+        <nav class="sidebar-menu">
+            <a href="/home" class="menu-item active">Home</a>
+            <a href="/cadastrar_item" class="menu-item">Cadastrar item</a>
+            <a href="/movimentacao" class="menu-item">Movimentações</a>
+            <a href="/cadastrar_usuario" class="menu-item">Usuários</a>
         </nav>
     </aside>
 
     <div class="main-content">
         <header class="header">
-            <div class="brand-align">
-                <h1>Almoxarifado SENAI</h1>
-            </div>
+            <div class="brand-align"><h1>Almoxarifado SENAI</h1></div>
             <div class="user-profile">
                 <i class="fa-solid fa-circle-user"></i>
                 <span class="username">admin</span>
             </div>
         </header>
 
-        <main class="content-section">
-            <div class="content-header">
-                <h2 class="page-title">Estoque Atual</h2>
-                <p class="page-subtitle">Consulte e gerencie os materiais cadastrados no almoxarifado</p>
-            </div>
-
-            <div class="action-bar">
-                <form class="search-form" action="/home" method="GET">
-                    <input type="text" name="search" class="search-input" placeholder="Pesquisar item ou categoria..." value="{{ search_query }}">
+        <main class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; gap: 20px; flex-wrap: wrap;">
+                <form action="/home" method="GET" style="flex: 1; max-width: 400px; display: flex; gap: 10px;">
+                    <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                        <input type="text" name="search" placeholder="Pesquisar item ou categoria..." value="{{ search_query or '' }}" style="padding: 10px 20px; border-radius: 20px;">
+                    </div>
                 </form>
-                
-                <div class="action-buttons-group" style="display: flex; flex-direction: column; gap: 10px; align-items: flex-end;">
-                    <a href="/cadastrar_item" class="btn-add">+ Adicionar item</a>
-                    <a href="/editar" class="btn-add" style="background-color: #f28b0c;">⚙️ Editar itens</a>
+
+                <div style="display: flex; gap: 15px;">
+                    <a href="/cadastrar_item" class="btn-save" style="text-decoration: none; display: inline-block; text-align: center; background-color: #1a2e6b;">+ Adicionar item</a>
+                    <a href="/editar" class="btn-save" style="text-decoration: none; display: inline-block; text-align: center;">⚙️ Editar itens</a>
                 </div>
             </div>
 
-            <div class="table-container">
-                <table class="data-table">
+            <div style="background-color: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #e0e0e0;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-family: 'Poppins', sans-serif;">
                     <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nome do Item</th>
-                            <th>Categoria</th>
-                            <th>Quantidade</th>
-                            <th>Descrição</th>
-                            <th>Mídia</th>
+                        <tr style="background-color: #1a2e6b; color: white;">
+                            <th style="padding: 15px 20px; font-weight: 600;">ID</th>
+                            <th style="padding: 15px 20px; font-weight: 600;">Nome do Item</th>
+                            <th style="padding: 15px 20px; font-weight: 600;">Categoria</th>
+                            <th style="padding: 15px 20px; font-weight: 600;">Quantidade</th>
+                            <th style="padding: 15px 20px; font-weight: 600;">Preço</th>
+                            <th style="padding: 15px 20px; font-weight: 600;">Descrição</th>
+                            <th style="padding: 15px 20px; font-weight: 600; text-align: center;">Mídia</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% if itens %}
-                            {% for item in itens %}
-                            <tr>
-                                <td>{{ item.id_produto }}</td>
-                                <td><strong>{{ item.nome }}</strong></td>
-                                <td>{{ item.area }}</td>
-                                <td>{{ item.quantidade }}</td>
-                                <td>{{ item.descricao }}</td>
-                                <td>
-                                    {% if item.link_midia %}
-                                        <button class="btn-foto" onclick="abrirModal('{{ item.nome }}', '{{ item.link_midia }}')">Ver Foto</button>
-                                    {% else %}
-                                        <span style="color: #999; font-size: 13px;">Sem foto</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
+                        {% for item in itens %}
+                        <tr style="border-bottom: 1px solid #eeeeee; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#f9f9f9'" onmouseout="this.style.backgroundColor='transparent'">
+                            <td style="padding: 15px 20px; color: #666;">{{ item.id_produto }}</td>
+                            <td style="padding: 15px 20px; color: #1a2e6b; font-weight: 600;">{{ item.nome }}</td>
+                            <td style="padding: 15px 20px; color: #555;">{{ item.area }}</td>
+                            <td style="padding: 15px 20px; color: #555; font-weight: 600;">{{ item.quantidade }}</td>
+                            <td style="padding: 15px 20px; color: #2e7d32; font-weight: 600;">R$ {{ "%.2f"|format(item.preco|float) }}</td>
+                            <td style="padding: 15px 20px; color: #666; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ item.descricao }}">{{ item.descricao }}</td>
+                            <td style="padding: 15px 20px; text-align: center;">
+                                <button type="button" class="btn-save" style="padding: 6px 12px; font-size: 13px; border: none; cursor: pointer; border-radius: 6px;" onclick="abrirFoto('{{ item.nome }}', '{{ item.link_midia }}')">Ver Foto</button>
+                            </td>
+                        </tr>
                         {% else %}
-                            <tr class="no-results">
-                                <td colspan="6">Nenhum item encontrado correspondente à pesquisa.</td>
-                            </tr>
-                        {% endif %}
+                        <tr>
+                            <td colspan="7" style="padding: 30px; text-align: center; color: #999;">Nenhum item encontrado no estoque.</td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
         </main>
     </div>
 
-    <div id="modalFoto" class="modal-container" onclick="fecharModalExterno(event)">
+    <div id="meuModal" class="modal-foto">
         <div class="modal-conteudo">
-            <span class="btn-fechar" onclick="fecharModal()">&times;</span>
-            <h3 id="modalTitulo">Nome do Item</h3>
-            <img id="modalImagem" src="" alt="Imagem do Item">
+            <h3 id="modalNome" style="color: #1a2e6b; margin-bottom: 15px; font-family: 'Poppins', sans-serif;"></h3>
+            <img id="modalImg" src="" alt="Foto do Item">
+            <div>
+                <button class="btn-fechar" onclick="fecharFoto()">Fechar</button>
+            </div>
         </div>
     </div>
 
     <script>
-        function abrirModal(nome, url) {
-            document.getElementById('modalTitulo').innerText = nome;
-            document.getElementById('modalImagem').src = url;
-            document.getElementById('modalFoto').style.display = 'flex';
+        function abrirFoto(nome, url) {
+            document.getElementById('modalNome').innerText = nome;
+            document.getElementById('modalImg').src = url;
+            document.getElementById('meuModal').style.display = 'flex';
         }
-        function fecharModal() {
-            document.getElementById('modalFoto').style.display = 'none';
+
+        function fecharFoto() {
+            document.getElementById('meuModal').style.display = 'none';
         }
-        function fecharModalExterno(event) {
-            if (event.target === document.getElementById('modalFoto')) {
-                fecharModal();
+
+        // Fecha o modal se clicar na parte escura de fora
+        window.onclick = function(event) {
+            let modal = document.getElementById('meuModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
             }
         }
     </script>
+
 </body>
 </html>

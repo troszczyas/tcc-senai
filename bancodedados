@@ -5,12 +5,13 @@ COLLATE utf8mb4_unicode_ci;
 
 USE almoxarifado_db;
 
--- 2. Tabela de Estoque / Produtos
+-- 2. Tabela de Estoque / Produtos (Atualizada com a coluna preco)
 CREATE TABLE IF NOT EXISTS estoque (
     id_produto VARCHAR(5) NOT NULL,
     nome VARCHAR(100) NOT NULL,
     area VARCHAR(50) NOT NULL,
     quantidade INT NOT NULL DEFAULT 0,
+    preco DECIMAL(10,2) NOT NULL DEFAULT 0.00, -- COLUNA ADICIONADA AQUI
     descricao VARCHAR(255) NULL,
     link_midia VARCHAR(500) NULL,
     PRIMARY KEY (id_produto)
@@ -47,52 +48,51 @@ CREATE TABLE IF NOT EXISTS historico_logs (
 -- -----------------------------------------------------------------------------
 
 -- Define a Chave Mestra para o Painel Administrativo
--- Altere 'SUA_CHAVE_MESTRA_AQUI' para o código que você usa na verificação secundária
 INSERT INTO config_admin (chave_secundaria) 
 VALUES ('SENAI');
 
--- Garante a remoção de qualquer usuário antigo 'admin' para evitar conflitos
-DELETE FROM usuarios WHERE login = 'admin';
+-- Garante a remoção de qualquer usuário antigo para evitar conflitos antes de reinserir
+DELETE FROM usuarios WHERE login IN ('admin', 'Tati', 'Ale', 'Roger', 'Duda', 'Alessandra', 'Yasmin');
 
--- Criação do Administrador Padrão
--- O hash abaixo corresponde estritamente à senha em texto puro: admin
-INSERT INTO usuarios (login, senha, status, role) #senha = admin
-VALUES ('admin', '123', 'ativo', 'admin');
+-- Criação dos Administradores e Usuários
+INSERT INTO usuarios (login, senha, status, role) 
+VALUES ('admin', 'Roger', 'ativo', 'admin');
 
-INSERT INTO usuarios (login, senha, status, role) #senha = 123
+INSERT INTO usuarios (login, senha, status, role) 
 VALUES ('Tati', '777', 'ativo', 'admin');
 
-DELETE FROM usuarios WHERE login IN ('admin', 'Tati', 'Ale', 'Roger', 'Duda');
-DELETE FROM usuarios WHERE login = 'Alessandra';
-DELETE FROM usuarios WHERE login = 'Yasmin';
+INSERT INTO usuarios (login, senha, status, role) 
+VALUES ('Ale', '456', 'ativo', 'user');
 
-USE almoxarifado_db;
-
-UPDATE usuarios 
-SET senha = 'Roger'
-WHERE login = 'admin';
-
-INSERT INTO usuarios (login, senha, status, role) #Adiciona usuários; senha: Slumber
-VALUES ('Ale', '456','ativo', 'user');
-INSERT INTO usuarios (login, senha, status, role) #Adiciona usuários; senha: Slumber
+INSERT INTO usuarios (login, senha, status, role) 
 VALUES ('Roger', '000', 'ativo', 'user');
-INSERT INTO usuarios (login, senha, status, role) #Adiciona usuários; senha: Slumber
+
+INSERT INTO usuarios (login, senha, status, role) 
 VALUES ('Duda', '789', 'ativo', 'user');
 
-INSERT INTO estoque (id_produto, nome, area, quantidade, descricao, link_midia) #Adiciona itens
-VALUES ('00001', 'Alicate', 'Geral', 10, 'Ferramenta manual usada para segurar, cortar, dobrar e apertar materiais', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS66xbAeYwltYSUHqGq4qKWALJX3lkY1ojqbRLkKs82Yw&s=10');
-INSERT INTO estoque (id_produto, nome, area, quantidade, descricao, link_midia) #Adiciona itens
-VALUES ('10001', 'Pregos', 'Mecânica', 200, 'Peças metálicas usadas para fixar materiais, principalmente madeira.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuleVPCTMLQEhf4lkkzlW9AEMXDfDEqw4RAwsZjdZ-jw&s=10');
-INSERT INTO estoque (id_produto, nome, area, quantidade, descricao, link_midia) #Adiciona itens
-VALUES ('10002', 'Parafusos', 'Mecânica', 200, 'Peças metálicas usadas para unir e fixar materiais.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlm_v8Khvn-wORVgWlbuepAl0Urz62I7pJCK2UQ3-nnQ&s=10');
-INSERT INTO estoque (id_produto, nome, area, quantidade, descricao, link_midia) #Adiciona itens
-VALUES ('20001', 'Serrote', 'Manual', 2, 'Ferramenta manual usada para cortar madeira.', 'https://www.incorzul.com.br/serrote-profissional-22-pol-100112-paraboni?srsltid=AfmBOooLCrh57Y6HbgqBUnunnwkgjC1MZx84gRXzzrK4Qq5dPWd6_mLa');
-INSERT INTO estoque (id_produto, nome, area, quantidade, descricao, link_midia) #Adiciona itens
-VALUES ('00002', 'Chave philips', 'Geral', 7, 'Ferramenta manual usada para apertar e soltar parafusos de cabeça cruzada.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMOMqwTSGR4S2soHpfyq7s5czjFTB6h6zBHHycqd2ZRg&s=10');
+-- Limpa os itens antigos para evitar erro de Chave Primária Duplicada ao rodar de novo
+DELETE FROM estoque WHERE id_produto IN ('00001', '10001', '10002', '20001', '00002');
 
+-- Adiciona itens (Atualizado com os valores correspondentes de preço)
+INSERT INTO estoque (id_produto, nome, area, quantidade, preco, descricao, link_midia) 
+VALUES ('00001', 'Alicate', 'Geral', 10, 35.90, 'Ferramenta manual usada para segurar, cortar, dobrar e apertar materiais', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS66xbAeYwltYSUHqGq4qKWALJX3lkY1ojqbRLkKs82Yw&s=10');
+
+INSERT INTO estoque (id_produto, nome, area, quantidade, preco, descricao, link_midia) 
+VALUES ('10001', 'Pregos', 'Mecânica', 200, 0.15, 'Peças metálicas usadas para fixar materiais, principalmente madeira.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuleVPCTMLQEhf4lkkzlW9AEMXDfDEqw4RAwsZjdZ-jw&s=10');
+
+INSERT INTO estoque (id_produto, nome, area, quantidade, preco, descricao, link_midia) 
+VALUES ('10002', 'Parafusos', 'Mecânica', 200, 0.25, 'Peças metálicas usadas para unir e fixar materiais.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlm_v8Khvn-wORVgWlbuepAl0Urz62I7pJCK2UQ3-nnQ&s=10');
+
+INSERT INTO estoque (id_produto, nome, area, quantidade, preco, descricao, link_midia) 
+VALUES ('20001', 'Serrote', 'Manual', 2, 45.00, 'Ferramenta manual usada para cortar madeira.', 'https://www.incorzul.com.br/serrote-profissional-22-pol-100112-paraboni?srsltid=AfmBOooLCrh57Y6HbgqBUnunnwkgjC1MZx84gRXzzrK4Qq5dPWd6_mLa');
+
+INSERT INTO estoque (id_produto, nome, area, quantidade, preco, descricao, link_midia) 
+VALUES ('00002', 'Chave philips', 'Geral', 7, 18.50, 'Ferramenta manual usada para apertar e soltar parafusos de cabeça cruzada.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMOMqwTSGR4S2soHpfyq7s5czjFTB6h6zBHHycqd2ZRg&s=10');
+
+-- Verificações finais
 SELECT * FROM estoque;
 SELECT * FROM config_admin;
 SELECT * FROM historico_logs;
-SELECT * FROM Usuarios;
+SELECT * FROM usuarios;
 
 COMMIT;

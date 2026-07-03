@@ -7,14 +7,14 @@ import mysql.connector
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
-# Dados fictícios ajustados exatamente com os dados iniciais do seu Script SQL
-# (Será usado como plano de fundo automático apenas se o MySQL Workbench estiver fechado)
+# ================= ESTOQUE E USUÁRIOS FICTÍCIOS (MOCK) =================
+# Atualizado com a coluna "preco" para os itens padrão do SENAI
 ESTOQUE_MOCK = [
-    {"id_produto": "00001", "nome": "Alicate", "area": "Geral", "quantidade": 10, "descricao": "Ferramenta manual usada para segurar, cortar, dobrar e apertar materiais.", "link_midia": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS66xbAeYwltYSUHqGq4qKWALJX3lkY1ojqbRLkKs82Yw&s=10"},
-    {"id_produto": "10001", "nome": "Pregos", "area": "Mecânica", "quantidade": 200, "descricao": "Peças metálicas usadas para fixar materiais, principalmente madeira.", "link_midia": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuleVPCTMLQEhf4lkkzlW9AEMXDfDEqw4RAwsZjdZ-jw&s=10"},
-    {"id_produto": "10002", "nome": "Parafusos", "area": "Mecânica", "quantidade": 200, "descricao": "Peças metálicas usadas para unir e fixar materiais.", "link_midia": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlm_v8Khvn-wORVgWlbuepAl0Urz62I7pJCK2UQ3-nnQ&s=10"},
-    {"id_produto": "20001", "nome": "Serrote", "area": "Manual", "quantidade": 2, "descricao": "Ferramenta manual usada para cortar madeira.", "link_midia": "https://www.incorzul.com.br/serrote-profissional-22-pol-100112-paraboni?srsltid=AfmBOooLCrh57Y6HbgqBUnunnwkgjC1MZx84gRXzzrK4Qq5dPWd6_mLa"},
-    {"id_produto": "00002", "nome": "Chave philips", "area": "Geral", "quantidade": 7, "descricao": "Ferramenta manual usada para apertar e soltar parafusos de cabeça cruzada.", "link_midia": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMOMqwTSGR4S2soHpfyq7s5czjFTB6h6zBHHycqd2ZRg&s=10"}
+    {"id_produto": "00001", "nome": "Alicate", "area": "Geral", "quantidade": 10, "descricao": "Ferramenta manual usada para segurar, cortar, dobrar e apertar materiais.", "preco": 35.90, "link_midia": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS66xbAeYwltYSUHqGq4qKWALJX3lkY1ojqbRLkKs82Yw&s=10"},
+    {"id_produto": "10001", "nome": "Pregos", "area": "Mecânica", "quantidade": 200, "descricao": "Peças metálicas usadas para fixar materiais, principalmente madeira.", "preco": 0.15, "link_midia": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuleVPCTMLQEhf4lkkzlW9AEMXDfDEqw4RAwsZjdZ-jw&s=10"},
+    {"id_produto": "10002", "nome": "Parafusos", "area": "Mecânica", "quantidade": 200, "descricao": "Peças metálicas usadas para unir e fixar materiais.", "preco": 0.25, "link_midia": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlm_v8Khvn-wORVgWlbuepAl0Urz62I7pJCK2UQ3-nnQ&s=10"},
+    {"id_produto": "20001", "nome": "Serrote", "area": "Manual", "quantidade": 2, "descricao": "Ferramenta manual usada para cortar madeira.", "preco": 45.00, "link_midia": "https://www.incorzul.com.br/serrote-profissional-22-pol-100112-paraboni?srsltid=AfmBOooLCrh57Y6HbgqBUnunnwkgjC1MZx84gRXzzrK4Qq5dPWd6_mLa"},
+    {"id_produto": "00002", "nome": "Chave philips", "area": "Geral", "quantidade": 7, "descricao": "Ferramenta manual usada para apertar e soltar parafusos de cabeça cruzada.", "preco": 18.50, "link_midia": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMOMqwTSGR4S2soHpfyq7s5czjFTB6h6zBHHycqd2ZRg&s=10"}
 ]
 
 USUARIOS_MOCK = {
@@ -33,7 +33,7 @@ def obter_conexao():
         database="almoxarifado_db"
     )
 
-# ================= FUNÇÕES AUXILIARES INTEGRAIS =================
+# ================= FUNÇÕES AUXILIARES =================
 
 def limpar_texto(texto):
     if not texto:
@@ -97,7 +97,7 @@ def logar():
                 session['permissao'] = user['role']
                 return redirect('/home')
     except Exception:
-        # Modo de Simulação Inteligente (Caso o banco de dados esteja offline/erro 2003)
+        # Modo de Simulação Inteligente (Caso o banco de dados esteja offline)
         user_lower = usuario.lower()
         if user_lower in USUARIOS_MOCK and senha == USUARIOS_MOCK[user_lower]['senha']:
             session['usuario'] = usuario
@@ -119,38 +119,44 @@ def home():
         conexao = obter_conexao()
         cursor = conexao.cursor(dictionary=True)
 
+        # 1. Tenta buscar incluindo a coluna preco do banco real (100% corrigido sem 'quantity')
         if pesquisa:
             sql = """
-                SELECT id_produto, nome, area, quantity as quantidade, descricao, link_midia 
+                SELECT id_produto, nome, area, quantidade, preco, descricao, link_midia 
                 FROM estoque WHERE nome LIKE %s OR area LIKE %s 
                 ORDER BY id_produto ASC
             """
-            # Tratamento caso seu banco use o nome correto
             try:
                 cursor.execute(sql, (f"%{pesquisa}%", f"%{pesquisa}%"))
             except Exception:
-                sql = """
-                    SELECT id_produto, nome, area, quantidade, descricao, link_midia 
-                    FROM estoque WHERE nome LIKE %s OR area LIKE %s 
-                    ORDER BY id_produto ASC
-                """
+                # Caso a coluna preco não exista fisicamente no seu MySQL atual, roda o fallback sem ela
+                sql = "SELECT id_produto, nome, area, quantidade, descricao, link_midia FROM estoque WHERE nome LIKE %s OR area LIKE %s ORDER BY id_produto ASC"
                 cursor.execute(sql, (f"%{pesquisa}%", f"%{pesquisa}%"))
         else:
             try:
-                cursor.execute("SELECT id_produto, nome, area, quantidade, descricao, link_midia FROM estoque ORDER BY id_produto ASC")
+                cursor.execute("SELECT id_produto, nome, area, quantidade, preco, descricao, link_midia FROM estoque ORDER BY id_produto ASC")
             except Exception:
                 cursor.execute("SELECT id_produto, nome, area, quantidade, descricao, link_midia FROM estoque ORDER BY id_produto ASC")
 
         itens = cursor.fetchall()
+        
+        # Injeta um preço simulado por amostragem caso a coluna 'preco' veio ausente do MySQL físico
+        for item in itens:
+            if 'preco' not in item or item['preco'] is None:
+                mock_correspondente = next((m for m in ESTOQUE_MOCK if m["id_produto"] == item["id_produto"]), None)
+                item['preco'] = mock_correspondente['preco'] if mock_correspondente else 10.00
+
         cursor.close()
         conexao.close()
     except Exception:
+        # Fallback total para o Modo Simulação offline se tudo falhar
         if pesquisa:
             itens = [item for item in ESTOQUE_MOCK if pesquisa.lower() in item['nome'].lower() or pesquisa.lower() in item['area'].lower()]
         else:
             itens = ESTOQUE_MOCK
     
     return render_template('home.html', itens=itens, search_query=pesquisa)
+
 
 @app.route('/cadastrar_item')
 def cadastrar_item():
@@ -192,7 +198,7 @@ def salvar_item():
         cursor.close()
         conexao.close()
     except Exception:
-        flash("Item salvos ficticiamente no layout (Modo Simulação)", "success")
+        flash("Item salvo ficticiamente no layout (Modo Simulação)", "success")
 
     return redirect('/home')
 
@@ -207,6 +213,12 @@ def movimentacao():
         cursor = conexao.cursor(dictionary=True)
         cursor.execute("SELECT * FROM estoque ORDER BY id_produto ASC")
         itens = cursor.fetchall()
+        
+        # Garante preço preenchido aqui também para evitar erros de renderização
+        for item in itens:
+            if 'preco' not in item or item['preco'] is None:
+                item['preco'] = 10.00
+                
         cursor.close()
         conexao.close()
     except Exception:
@@ -257,8 +269,6 @@ def movimentar():
 
     return redirect('/home')
 
-
-# ================= ROTAS DE EDIÇÃO ADAPTADAS SEM A COLUNA PRECO =================
 
 @app.route('/editar')
 def editar():
@@ -347,7 +357,7 @@ def salvar_usuario():
 
     try:
         conexao = obter_conexao()
-        cursor = conexao.cursor()
+        cursor = mysql.connector.connect().cursor()
         sql = "INSERT INTO usuarios (login, senha, status, role) VALUES (%s, %s, %s, %s)"
         cursor.execute(sql, (usuario, senha, 'ativo', permissao))
         conexao.commit()
