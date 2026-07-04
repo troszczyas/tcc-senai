@@ -1,0 +1,75 @@
+/* Estilos específicos para o layout da página de perfil */
+
+.perfil-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.secao-titulo {
+    color: #1a2e6b; 
+    margin-top: 30px; 
+    margin-bottom: 5px; 
+    border-bottom: 2px solid #eee; 
+    padding-bottom: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.campo-bloqueado {
+    background-color: #f4f4f4 !important; 
+    color: #888 !important;
+    cursor: not-allowed;
+    border: 1px solid #ddd !important;
+}
+
+.badge-info {
+    display: inline-block;
+    background-color: #e3f2fd;
+    color: #0d47a1;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-solicitar-codigo {
+    background-color: #1a2e6b;
+    color: white;
+    border: none;
+    padding: 0 15px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.btn-solicitar-codigo:hover {
+    background-color: #111e47;
+}
+
+/* Alertas de feedback */
+.alerta-feedback {
+    padding: 15px; 
+    margin-bottom: 20px; 
+    border-radius: 8px; 
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+}
+
+.alerta-feedback.success {
+    background-color: #e8f5e9; 
+    color: #2e7d32;
+    border-left: 5px solid #2e7d32;
+}
+
+.alerta-feedback.error {
+    background-color: #ffebee; 
+    color: #c62828;
+    border-left: 5px solid #c62828;
+}

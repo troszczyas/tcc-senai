@@ -1,5 +1,6 @@
 import os
 import re
+import random
 import unicodedata
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 import mysql.connector
@@ -192,7 +193,7 @@ def salvar_item():
         cursor.close()
         conexao.close()
     except Exception:
-        flash("Item salvo ficticiamente no layout (Modo Simulação)", "success")
+        flash("Item salvo no modo simulação!", "success")
 
     return redirect('/home')
 
@@ -246,6 +247,7 @@ def movimentar():
         if tipo == "entrada":
             novo_total = estoque_atual + quantidade
         else:
+            # CORRIGIDO: quantidade em vez de quantity
             if quantidade > estoque_atual:
                 cursor.close()
                 conexao.close()
@@ -258,7 +260,7 @@ def movimentar():
         cursor.close()
         conexao.close()
     except Exception:
-        flash("Movimentação registrada com sucesso no layout! (Modo Simulação)", "success")
+        flash("Movimentação registrada com sucesso! (Modo Simulação)", "success")
 
     return redirect('/home')
 
@@ -362,6 +364,88 @@ def salvar_usuario():
         flash("Usuário cadastrado com sucesso! (Modo Simulação)", "success")
 
     return redirect('/home')
+
+
+# ================= SEÇÃO DE PERFIL COM VALIDAÇÃO DE CÓDIGO =================
+
+@app.route('/perfil')
+def perfil():
+    if 'usuario' not in session:
+        return redirect('/')
+    
+    try:
+        conexao = obter_conexao()
+        cursor = conexao.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM usuarios WHERE login = %s", (session['usuario'],))
+        dados_usuario = cursor.fetchone()
+        cursor.close()
+        conexao.close()
+    except Exception:
+        dados_usuario = {
+            "login": session['usuario'],
+            "nome_completo": "Usuário de Teste SENAI",
+            "email": "admin@senai.br",
+            "data_nascimento": "2000-01-01",
+            "area_atuacao": "Geral",
+            "estado": "SP",
+            "cidade": "São Paulo"
+        }
+    
+    return render_template('atualizar_perfil.html', user=dados_usuario)
+
+
+@app.route('/enviar_codigo_perfil', methods=['POST'])
+def enviar_codigo_perfil():
+    if 'usuario' not in session:
+        return jsonify({"status": "error", "message": "Sessão expirada."})
+    
+    codigo = str(random.randint(100000, 999999))
+    session['codigo_verificacao'] = codigo
+    
+    return jsonify({
+        "status": "success", 
+        "message": f"Código de segurança gerado! Use o número: {codigo}"
+    })
+
+
+@app.route('/atualizar_perfil', methods=['POST'])
+def atualizar_perfil():
+    if 'usuario' not in session:
+        return redirect('/')
+
+    nova_senha = request.form.get('senha')
+    codigo_inserido = request.form.get('codigo_verificacao')
+    nova_area = request.form.get('area')
+    novo_estado = request.form.get('estado')
+    nova_cidade = request.form.get('cidade')
+
+    if nova_senha:
+        codigo_salvo = session.get('codigo_verificacao')
+        if not codigo_inserido or codigo_inserido != codigo_salvo:
+            flash("Código de verificação incorreto! A senha não foi alterada.", "error")
+            return redirect('/perfil')
+        
+        session.pop('codigo_verificacao', None)
+
+    try:
+        conexao = obter_conexao()
+        cursor = conexao.cursor()
+        
+        if nova_senha:
+            sql = "UPDATE usuarios SET senha = %s, area_atuacao = %s, estado = %s, city = %s WHERE login = %s"
+            cursor.execute(sql, (nova_senha, nova_area, novo_estado, nova_cidade, session['usuario']))
+        else:
+            sql = "UPDATE usuarios SET area_atuacao = %s, estado = %s, city = %s WHERE login = %s"
+            cursor.execute(sql, (nova_area, novo_estado, nova_cidade, session['usuario']))
+            
+        conexao.commit()
+        cursor.close()
+        conexao.close()
+        flash("Perfil atualizado com sucesso!", "success")
+    except Exception:
+        flash("Perfil atualizado com sucesso! (Modo Simulação)", "success")
+
+    return redirect('/perfil')
 
 
 @app.route('/logout')

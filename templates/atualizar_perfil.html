@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil - Almoxarifado SENAI</title>
+    <link rel="stylesheet" href="../static/usuario.css">
+    <link rel="stylesheet" href="../static/atualizar_perfil.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <aside class="sidebar" id="mySidebar">
+        <div class="sidebar-menu-toggle" id="sidebarToggle" style="cursor: pointer;">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+        <nav class="sidebar-menu">
+            <a href="/home" class="menu-item"><i class="fa-solid fa-house" style="margin-right: 8px;"></i> <span>Home</span></a>
+            <a href="/cadastrar_item" class="menu-item"><i class="fa-solid fa-plus" style="margin-right: 8px;"></i> <span>Cadastrar item</span></a>
+            <a href="/movimentacao" class="menu-item"><i class="fa-solid fa-right-left" style="margin-right: 8px;"></i> <span>Movimentações</span></a>
+            <a href="/cadastrar_usuario" class="menu-item"><i class="fa-solid fa-users" style="margin-right: 8px;"></i> <span>Usuários</span></a>
+        </nav>
+    </aside>
+
+    <div class="main-content" id="myMainContent">
+        <header class="header">
+            <div class="brand-align"><h1>Minha Conta</h1></div>
+            <div class="user-profile">
+                <a href="/home" style="color: white; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-house"></i> Voltar para Home
+                </a>
+            </div>
+        </header>
+
+        <main class="container">
+            <div class="perfil-container">
+                
+                <div id="caixaCodigoSimulado" class="alerta-feedback success" style="display: none; margin-bottom: 20px;"></div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="alerta-feedback {{ category }}">
+                        {{ message }}
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+
+                <div class="title-section">
+                    <h2>Atualizar Dados do Perfil</h2>
+                    <p>Gerencie suas informações cadastrais e segurança da conta</p>
+                </div>
+
+                <div class="form-card">
+                    <form action="/atualizar_perfil" method="POST">
+                        
+                        <h3 class="secao-titulo">Dados Pessoais</h3>
+                        <span class="badge-info"><i class="fa-solid fa-lock"></i> Estes campos não podem ser alterados</span>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nome Completo</label>
+                                <input type="text" value="{{ user.nome_completo if user else 'Usuário de Teste' }}" class="campo-bloqueado" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>E-mail Corporativo</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="email" value="{{ user.email if user else 'admin@senai.br' }}" class="campo-bloqueado" readonly style="flex: 1;">
+                                    <button type="button" class="btn-solicitar-codigo" onclick="solicitarCodigoSeguranca()">Verificar E-mail</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Data de Nascimento</label>
+                                <input type="text" value="{{ user.data_nascimento if user else '01/01/2000' }}" class="campo-bloqueado" readonly>
+                            </div>
+                        </div>
+
+                        <h3 class="secao-titulo">Segurança e Senha</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="senha">Nova Senha (deixe vazio se não for alterar)</label>
+                                <input type="password" name="senha" id="senha" placeholder="Digite a nova senha" oninput="gerenciarCampoCodigo()">
+                            </div>
+                            <div class="form-group">
+                                <label for="codigo_verificacao" id="labelCodigo">Código de Verificação</label>
+                                <input type="text" name="codigo_verificacao" id="codigo_verificacao" placeholder="Clique em 'Verificar E-mail'" class="campo-bloqueado" readonly maxlength="6">
+                            </div>
+                        </div>
+
+                        <h3 class="secao-titulo">Dados de Atuação e Endereço</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="area">Área de Atuação</label>
+                                <select name="area" id="area" required>
+                                    <option value="Geral" {% if user and user.area_atuacao == 'Geral' %}selected{% endif %}>Geral</option>
+                                    <option value="Mecânica" {% if user and user.area_atuacao == 'Mecânica' %}selected{% endif %}>Mecânica</option>
+                                    <option value="Elétrica" {% if user and user.area_atuacao == 'Elétrica' %}selected{% endif %}>Elétrica</option>
+                                    <option value="Manual" {% if user and user.area_atuacao == 'Manual' %}selected{% endif %}>Manual</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="estado">Estado (UF)</label>
+                                <input type="text" name="estado" id="estado" value="{{ user.estado if user and user.estado else 'SP' }}" maxlength="2" placeholder="Ex: SP" required style="text-transform: uppercase;">
+                            </div>
+                            <div class="form-group">
+                                <label for="cidade">Cidade</label>
+                                <input type="text" name="cidade" id="cidade" value="{{ user.cidade if user and user.cidade else 'São Paulo' }}" placeholder="Ex: São Paulo" required>
+                            </div>
+                        </div>
+
+                        <div class="btn-container" style="margin-top: 30px;">
+                            <button type="submit" class="btn-save" style="background-color: #1a2e6b;">Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Lógica de Toggle do menu lateral também na tela de Perfil
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('mySidebar');
+        const mainContent = document.getElementById('myMainContent');
+
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+        });
+
+        function gerenciarCampoCodigo() {
+            const senhaInput = document.getElementById('senha');
+            if(senhaInput.value.trim() !== "") {
+                document.getElementById('labelCodigo').innerHTML = 'Código de Verificação <span style="color: #c62828;">*obrigatório</span>';
+            } else {
+                document.getElementById('labelCodigo').innerText = 'Código de Verificação';
+            }
+        }
+
+        function solicitarCodigoSeguranca() {
+            fetch('/enviar_codigo_perfil', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    const box = document.getElementById('caixaCodigoSimulado');
+                    box.innerText = data.message;
+                    box.style.display = 'block';
+                    
+                    const codigoInput = document.getElementById('codigo_verificacao');
+                    codigoInput.classList.remove('campo-bloqueado');
+                    codigoInput.readOnly = false;
+                    codigoInput.placeholder = "Digite o código gerado";
+                    codigoInput.focus();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

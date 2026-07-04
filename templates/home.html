@@ -4,14 +4,130 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Almoxarifado SENAI - Home</title>
-    <link rel="stylesheet" href="../static/usuario.css">
+    <link rel="stylesheet" href="../static/item.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Estilos da caixinha (Modal) que vai abrir a foto */
+        /* Estrutura Base do Layout */
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* Topbar fixa superior */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color: #1a2e6b;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-sizing: border-box;
+            z-index: 2000;
+        }
+
+        /* Botão do menu sanduíche integrado */
+        .btn-toggle-bars {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin-right: 15px;
+        }
+
+        /* Container que junta Sidebar + Conteúdo */
+        .app-container {
+            display: flex;
+            margin-top: 60px;
+            height: calc(100vh - 60px);
+            width: 100%;
+        }
+
+        /* CONFIGURAÇÃO DA SIDEBAR RETRÁTIL */
+        .sidebar {
+            width: 260px;
+            background-color: #1a2e6b;
+            transition: width 0.3s ease, min-width 0.3s ease !important;
+            height: 100%;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+        
+        .sidebar.collapsed {
+            width: 70px !important;
+            min-width: 70px !important;
+        }
+
+        .sidebar nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .sidebar nav ul li a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .sidebar nav ul li a i {
+            font-size: 18px;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .sidebar.collapsed nav ul li a span {
+            display: none !important;
+        }
+
+        .sidebar.collapsed nav ul li a {
+            justify-content: center;
+            padding: 12px 0;
+        }
+
+        .sidebar nav ul li a:hover, .sidebar nav ul li.active a {
+            background-color: #f59e0b;
+            border-radius: 0 20px 20px 0;
+        }
+        
+        .sidebar.collapsed nav ul li a:hover, .sidebar.collapsed nav ul li.active a {
+            border-radius: 10px;
+            width: 50px;
+            margin: 0 auto;
+        }
+
+        /* Área do Conteúdo Principal */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        /* Modal de visualização de foto */
         .modal-foto {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 3000;
             top: 0;
             left: 0;
             width: 100%;
@@ -45,85 +161,185 @@
             font-weight: 600;
             border-radius: 8px;
             cursor: pointer;
-            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Dropdown do perfil */
+        .user-profile {
+            position: relative;
+            cursor: pointer;
+            color: white;
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            padding: 10px 0;
+            min-width: 160px;
+            z-index: 2500;
+            text-align: left;
+        }
+        .dropdown-menu a {
+            display: block;
+            padding: 10px 15px;
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .dropdown-menu a:hover {
+            background-color: #f5f5f5;
+            color: #1a2e6b;
+        }
+        .user-profile:hover .dropdown-menu {
+            display: block;
         }
     </style>
 </head>
 <body>
 
-    <aside class="sidebar">
-        <div class="sidebar-menu-toggle"><i class="fa-solid fa-bars"></i></div>
-        <nav class="sidebar-menu">
-            <a href="/home" class="menu-item active">Home</a>
-            <a href="/cadastrar_item" class="menu-item">Cadastrar item</a>
-            <a href="/movimentacao" class="menu-item">Movimentações</a>
-            <a href="/cadastrar_usuario" class="menu-item">Usuários</a>
-        </nav>
-    </aside>
-
-    <div class="main-content">
-        <header class="header">
-            <div class="brand-align"><h1>Almoxarifado SENAI</h1></div>
-            <div class="user-profile">
-                <i class="fa-solid fa-circle-user"></i>
-                <span class="username">admin</span>
+    <header class="header">
+        <div style="display: flex; align-items: center;">
+            <button id="sidebarToggle" class="btn-toggle-bars" type="button">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            
+            <div class="brand-align" style="display: flex; align-items: center; gap: 16px; height: 100%;">
+                <img src="https://www.imagemhost.com.br/images/2024/11/22/Logo-novo-SENAI_-sem-slogan_755X325.png" 
+                     alt="Logo SENAI" 
+                     style="
+                        max-height: 38px; 
+                        object-fit: contain;
+                        filter: brightness(0) invert(1) drop-shadow(0px 0px 0px #fff) contrast(1) hue-rotate(320deg) saturate(20);
+                        mix-blend-mode: screen;
+                     "
+                     onerror="this.style.filter='none';"> <div style="width: 2px; height: 24px; background-color: rgba(255, 255, 255, 0.35); border-radius: 2px;"></div>
+                
+                <span style="
+                    margin: 0; 
+                    font-size: 20px; 
+                    font-weight: 600; 
+                    color: white; 
+                    letter-spacing: 1px; 
+                    text-transform: uppercase;
+                    font-family: 'Poppins', sans-serif;
+                ">Almoxarifado</span>
             </div>
-        </header>
+        </div>
+        
+        <div class="user-profile">
+            <i class="fa-solid fa-circle-user"></i>
+            <span class="username">admin <i class="fa-solid fa-chevron-down" style="font-size: 12px; margin-left: 5px;"></i></span>
+            <div class="dropdown-menu">
+                <a href="/atualizar_perfil"><i class="fa-solid fa-user-gear"></i> Perfil</a>
+                <a href="/logout" style="color: #ef4444;"><i class="fa-solid fa-right-from-bracket"></i> Sair / Logout</a>
+            </div>
+        </div>
+    </header>
 
-        <main class="container">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; gap: 20px; flex-wrap: wrap;">
-                <form action="/home" method="GET" style="flex: 1; max-width: 400px; display: flex; gap: 10px;">
-                    <div class="form-group" style="margin-bottom: 0; flex: 1;">
-                        <input type="text" name="search" placeholder="Pesquisar item ou categoria..." value="{{ search_query or '' }}" style="padding: 10px 20px; border-radius: 20px;">
+    <div class="app-container">
+        <aside class="sidebar" id="mySidebar">
+            <nav>
+                <ul>
+                    <li class="active"><a href="/home"><i class="fa-solid fa-house"></i> <span>Home</span></a></li>
+                    <li><a href="/cadastrar_item"><i class="fa-solid fa-plus"></i> <span>Cadastrar item</span></a></li>
+                    <li><a href="/movimentacao"><i class="fa-solid fa-arrows-rotate"></i> <span>Movimentações</span></a></li>
+                    <li><a href="/cadastrar_usuario"><i class="fa-solid fa-users"></i> <span>Usuários</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <div class="main-content">
+            <main class="container">
+                
+                <div class="home-banner" style="
+                    margin-top: 10px;
+                    background: linear-gradient(rgba(26, 46, 107, 0.8), rgba(26, 46, 107, 0.9)), url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158');
+                    background-size: cover;
+                    background-position: center;
+                    padding: 40px;
+                    border-radius: 12px;
+                    color: white;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 30px;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                    flex-wrap: wrap;
+                    gap: 20px;
+                ">
+                    <div style="flex: 1; min-width: 250px;">
+                        <h2 style="margin: 0; font-size: 36px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">Almoxarifado</h2>
+                        <p style="margin: 5px 0 0 0; color: #cbd5e1; font-size: 15px;">Painel de controle e gerenciamento de materiais</p>
                     </div>
-                </form>
-
-                <div style="display: flex; gap: 15px;">
-                    <a href="/cadastrar_item" class="btn-save" style="text-decoration: none; display: inline-block; text-align: center; background-color: #1a2e6b;">+ Adicionar item</a>
-                    <a href="/editar" class="btn-save" style="text-decoration: none; display: inline-block; text-align: center;">⚙️ Editar itens</a>
+                    
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <img src="https://www.imagemhost.com.br/images/2024/11/22/Logo-novo-SENAI_-sem-slogan_755X325.png" alt="Logo SENAI" style="max-height: 55px; object-fit: contain; filter: brightness(0) invert(1) drop-shadow(0px 2px 4px rgba(0,0,0,0.2));">
+                    </div>
                 </div>
-            </div>
 
-            <div style="background-color: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #e0e0e0;">
-                <table style="width: 100%; border-collapse: collapse; text-align: left; font-family: 'Poppins', sans-serif;">
-                    <thead>
-                        <tr style="background-color: #1a2e6b; color: white;">
-                            <th style="padding: 15px 20px; font-weight: 600;">ID</th>
-                            <th style="padding: 15px 20px; font-weight: 600;">Nome do Item</th>
-                            <th style="padding: 15px 20px; font-weight: 600;">Categoria</th>
-                            <th style="padding: 15px 20px; font-weight: 600;">Quantidade</th>
-                            <th style="padding: 15px 20px; font-weight: 600;">Preço</th>
-                            <th style="padding: 15px 20px; font-weight: 600;">Descrição</th>
-                            <th style="padding: 15px 20px; font-weight: 600; text-align: center;">Mídia</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in itens %}
-                        <tr style="border-bottom: 1px solid #eeeeee; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#f9f9f9'" onmouseout="this.style.backgroundColor='transparent'">
-                            <td style="padding: 15px 20px; color: #666;">{{ item.id_produto }}</td>
-                            <td style="padding: 15px 20px; color: #1a2e6b; font-weight: 600;">{{ item.nome }}</td>
-                            <td style="padding: 15px 20px; color: #555;">{{ item.area }}</td>
-                            <td style="padding: 15px 20px; color: #555; font-weight: 600;">{{ item.quantidade }}</td>
-                            <td style="padding: 15px 20px; color: #2e7d32; font-weight: 600;">R$ {{ "%.2f"|format(item.preco|float) }}</td>
-                            <td style="padding: 15px 20px; color: #666; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ item.descricao }}">{{ item.descricao }}</td>
-                            <td style="padding: 15px 20px; text-align: center;">
-                                <button type="button" class="btn-save" style="padding: 6px 12px; font-size: 13px; border: none; cursor: pointer; border-radius: 6px;" onclick="abrirFoto('{{ item.nome }}', '{{ item.link_midia }}')">Ver Foto</button>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="7" style="padding: 30px; text-align: center; color: #999;">Nenhum item encontrado no estoque.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </main>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; gap: 20px; flex-wrap: wrap;">
+                    <form action="/home" method="GET" style="flex: 1; max-width: 400px; display: flex; align-items: center;">
+                        <div class="form-group" style="margin-bottom: 0; flex: 1; position: relative; display: flex; align-items: center;">
+                            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 15px; pointer-events: none;"></i>
+                            <input type="text" name="search" placeholder="Pesquisar item ou categoria..." value="{{ search_query or '' }}" style="padding: 11px 20px 11px 45px; border-radius: 20px; width: 100%; box-sizing: border-box; border: 1px solid #cbd5e1; font-family: 'Poppins', sans-serif; font-size: 14px; outline: none;">
+                        </div>
+                    </form>
+
+                    <div style="display: flex; gap: 15px;">
+                        <a href="/cadastrar_item" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; background-color: #1a2e6b; color: white; padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#132250'" onmouseout="this.style.backgroundColor='#1a2e6b'">
+                            <i class="fa-solid fa-plus" style="margin-right: 8px;"></i> Adicionar item
+                        </a>
+
+                        <a href="/editar" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; background-color: white; color: #f59e0b; border: 2px solid #f59e0b; padding: 8px 18px; border-radius: 8px; font-weight: 600; font-size: 14px; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f59e0b'; this.style.color='white'" onmouseout="this.style.backgroundColor='white'; this.style.color='#f59e0b'">
+                            <i class="fa-solid fa-gear" style="margin-right: 8px;"></i> Editar itens
+                        </a>
+                    </div>
+                </div>
+
+                <div style="background-color: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #e0e0e0;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                        <thead>
+                            <tr style="background-color: #1a2e6b; color: white;">
+                                <th style="padding: 15px 20px; font-weight: 600;">ID</th>
+                                <th style="padding: 15px 20px; font-weight: 600;">Nome do Item</th>
+                                <th style="padding: 15px 20px; font-weight: 600;">Categoria</th>
+                                <th style="padding: 15px 20px; font-weight: 600;">Quantidade</th>
+                                <th style="padding: 15px 20px; font-weight: 600;">Preço</th>
+                                <th style="padding: 15px 20px; font-weight: 600;">Descrição</th>
+                                <th style="padding: 15px 20px; font-weight: 600; text-align: center;">Mídia</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in itens %}
+                            <tr style="border-bottom: 1px solid #eeeeee; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#f9f9f9'" onmouseout="this.style.backgroundColor='transparent'">
+                                <td style="padding: 15px 20px; color: #666;">{{ item.id_produto }}</td>
+                                <td style="padding: 15px 20px; color: #1a2e6b; font-weight: 600;">{{ item.nome }}</td>
+                                <td style="padding: 15px 20px; color: #555;">{{ item.area }}</td>
+                                <td style="padding: 15px 20px; color: #555; font-weight: 600;">{{ item.quantidade }}</td>
+                                <td style="padding: 15px 20px; color: #2e7d32; font-weight: 600;">R$ {{ "%.2f"|format(item.preco|float) }}</td>
+                                <td style="padding: 15px 20px; color: #666; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ item.descricao }}">{{ item.descricao }}</td>
+                                <td style="padding: 15px 20px; text-align: center;">
+                                    <button type="button" class="btn-save" style="padding: 6px 12px; font-size: 13px; border: none; cursor: pointer; border-radius: 6px;" onclick="abrirFoto('{{ item.nome }}', '{{ item.link_midia }}')">Ver Foto</button>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7" style="padding: 30px; text-align: center; color: #999;">Nenhum item encontrado no estoque.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
     </div>
 
     <div id="meuModal" class="modal-foto">
         <div class="modal-conteudo">
-            <h3 id="modalNome" style="color: #1a2e6b; margin-bottom: 15px; font-family: 'Poppins', sans-serif;"></h3>
+            <h3 id="modalNome" style="color: #1a2e6b; margin-bottom: 15px;"></h3>
             <img id="modalImg" src="" alt="Foto do Item">
             <div>
                 <button class="btn-fechar" onclick="fecharFoto()">Fechar</button>
@@ -132,6 +348,17 @@
     </div>
 
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('mySidebar');
+
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                });
+            }
+        });
+
         function abrirFoto(nome, url) {
             document.getElementById('modalNome').innerText = nome;
             document.getElementById('modalImg').src = url;
@@ -142,7 +369,6 @@
             document.getElementById('meuModal').style.display = 'none';
         }
 
-        // Fecha o modal se clicar na parte escura de fora
         window.onclick = function(event) {
             let modal = document.getElementById('meuModal');
             if (event.target == modal) {
@@ -150,6 +376,5 @@
             }
         }
     </script>
-
 </body>
 </html>
