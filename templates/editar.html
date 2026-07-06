@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Almoxarifado SENAI - Editar Detalhes do Item</title>
+    <title>Almoxarifado SENAI - Editar Item</title>
     <link rel="stylesheet" href="../static/item.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -87,81 +87,193 @@
             justify-content: center;
             padding: 12px 0;
         }
-        .sidebar nav ul li a:hover {
+        .sidebar nav ul li a:hover, .sidebar nav ul li.active a {
             background-color: #f59e0b;
             border-radius: 0 20px 20px 0;
+        }
+        .sidebar.collapsed nav ul li a:hover, .sidebar.collapsed nav ul li.active a {
+            border-radius: 10px;
+            width: 50px;
+            margin: 0 auto;
         }
         .main-content {
             flex: 1;
             overflow-y: auto;
-            padding: 30px;
+            padding: 40px;
             box-sizing: border-box;
             transition: all 0.3s ease;
         }
-        .user-profile {
-            position: relative;
-            cursor: pointer;
-            color: white;
-        }
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background-color: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            border-radius: 8px;
-            padding: 10px 0;
-            min-width: 160px;
-            z-index: 2500;
-            text-align: left;
-        }
-        .dropdown-menu a {
-            display: block;
-            padding: 10px 15px;
-            color: #333;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        .dropdown-menu a:hover {
-            background-color: #f5f5f5;
-            color: #1a2e6b;
-        }
-        .user-profile:hover .dropdown-menu {
-            display: block;
-        }
         
-        /* Layout do cartão de formulário */
+        /* Dropdown Perfil */
+        .custom-user-profile {
+            position: relative !important;
+            cursor: pointer !important;
+            color: white !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            padding: 5px 10px !important;
+            height: 100% !important;
+            user-select: none !important;
+        }
+        .custom-user-profile i.fa-circle-user {
+            font-size: 24px !important; 
+            color: white !important;
+        }
+        .custom-user-profile .username-text {
+            font-size: 16px !important;
+            font-weight: 600 !important;
+            color: white !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+        }
+        .custom-dropdown-menu {
+            display: none !important;
+            position: absolute !important;
+            top: 48px !important;
+            right: 0 !important;
+            background-color: white !important;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.15) !important;
+            border-radius: 12px !important;
+            padding: 12px 0 !important;
+            min-width: 200px !important;
+            z-index: 99999 !important;
+        }
+        .custom-dropdown-menu a {
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+            padding: 12px 20px !important;
+            color: #333333 !important;
+            text-decoration: none !important;
+            font-size: 15px !important;
+            font-weight: 500 !important;
+        }
+        .custom-dropdown-menu a.logout-item { color: #ef4444 !important; }
+        .custom-user-profile:hover .custom-dropdown-menu { display: block !important; }
+
+        /* ================= MODELO DE FORMULÁRIO CADASTRAR NOVO ITEM ================= */
+        .page-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 1000px;
+            margin: 0 auto 20px auto;
+        }
+        .btn-back {
+            color: #1a2e6b;
+            text-decoration: none;
+            font-size: 20px;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        .btn-back:hover {
+            color: #f59e0b;
+        }
         .form-card {
             background-color: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            border: 1px solid #e0e0e0;
-            max-width: 600px;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            border: 1px solid #eef2f6;
+            max-width: 1000px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+        .form-row-2 {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 25px;
+        }
+        .form-row-3 {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
         }
         .form-group {
-            margin-bottom: 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 0;
         }
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            color: #334155;
-            font-weight: 600;
-            font-size: 14px;
-        }
-        .form-group input, .form-group textarea {
+        .form-group-full {
             width: 100%;
-            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 25px;
+        }
+        .form-group label, .form-group-full label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 10px;
+            padding-left: 5px;
+        }
+        .form-group input, .form-group select, .form-group-full input, .form-group-full textarea {
+            width: 100%;
+            padding: 14px 24px;
+            border-radius: 20px;
             border: 1px solid #cbd5e1;
-            border-radius: 8px;
             font-family: 'Poppins', sans-serif;
             font-size: 14px;
             box-sizing: border-box;
             outline: none;
+            background-color: #f8fafc;
+            color: #334155;
+            transition: all 0.2s ease;
         }
-        .form-group input:focus, .form-group textarea:focus {
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234a5568' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            background-size: 16px;
+            padding-right: 45px;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group-full input:focus, .form-group-full textarea:focus {
             border-color: #1a2e6b;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(26, 46, 107, 0.05);
+        }
+        
+        /* Inputs desabilitados ou somente leitura (Fundo cinza bloqueado) */
+        .form-group input[readonly] {
+            background-color: #f1f5f9 !important;
+            color: #94a3b8 !important;
+            cursor: not-allowed !important;
+            border-color: #e2e8f0 !important;
+        }
+        
+        .form-group-full textarea {
+            border-radius: 20px;
+            resize: none;
+            padding: 18px 24px;
+        }
+        .actions-container {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn-save {
+            background-color: #f59e0b;
+            color: white;
+            font-weight: 600;
+            padding: 14px 40px;
+            border-radius: 25px;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+        }
+        .btn-save:hover {
+            background-color: #d97706;
+        }
+        .btn-save:active {
+            transform: scale(0.98);
         }
     </style>
 </head>
@@ -173,17 +285,20 @@
                 <i class="fa-solid fa-bars"></i>
             </button>
             <div class="brand-align" style="display: flex; align-items: center; gap: 16px; height: 100%;">
-                <img src="https://www.imagemhost.com.br/images/2024/11/22/Logo-novo-SENAI_-sem-slogan_755X325.png" alt="Logo SENAI" style="max-height: 38px; object-fit: contain; filter: brightness(0) invert(1) drop-shadow(0px 0px 0px #fff) contrast(1) hue-rotate(320deg) saturate(20); mix-blend-mode: screen;">
-                <div style="width: 2px; height: 24px; background-color: rgba(255, 255, 255, 0.35); border-radius: 2px;"></div>
+<img src="https://www.imagemhost.com.br/images/2024/11/22/Logo-novo-SENAI_-sem-slogan_755X325.png" alt="Logo SENAI" style="max-height: 38px; object-fit: contain; filter: brightness(0) invert(1);">                <div style="width: 2px; height: 24px; background-color: rgba(255, 255, 255, 0.35); border-radius: 2px;"></div>
                 <span style="margin: 0; font-size: 20px; font-weight: 600; color: white; letter-spacing: 1px; text-transform: uppercase;">Almoxarifado</span>
             </div>
         </div>
-        <div class="user-profile">
+
+        <div class="custom-user-profile">
             <i class="fa-solid fa-circle-user"></i>
-            <span class="username">admin <i class="fa-solid fa-chevron-down" style="font-size: 12px; margin-left: 5px;"></i></span>
-            <div class="dropdown-menu">
-                <a href="/atualizar_perfil"><i class="fa-solid fa-user-gear"></i> Perfil</a>
-                <a href="/logout" style="color: #ef4444;"><i class="fa-solid fa-right-from-bracket"></i> Sair / Logout</a>
+            <span class="username-text">
+                admin <i class="fa-solid fa-chevron-down" style="font-size: 11px;"></i>
+            </span>
+            <div class="custom-dropdown-menu">
+                <a href="/trocar_perfil"><i class="fa-solid fa-user-gear"></i> Trocar de Perfil</a>
+                <a href="/atualizar_perfil"><i class="fa-solid fa-address-card"></i> Atualizar Perfil</a>
+                <a href="/logout" class="logout-item"><i class="fa-solid fa-right-from-bracket"></i> Sair / Logout</a>
             </div>
         </div>
     </header>
@@ -201,52 +316,56 @@
         </aside>
 
         <div class="main-content">
-            <main class="container">
-                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
-                    <a href="/editar" style="text-decoration: none; color: #1a2e6b; font-size: 18px;"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
-                    <h2 style="color: #1a2e6b; margin: 0;"><i class="fa-solid fa-pen-to-square" style="margin-right: 10px;"></i> Editar Detalhes do Item</h2>
-                </div>
-                
-                <div class="form-card">
-                    <form action="/editar_item/{{ item.id_produto }}" method="POST">
+            <div class="page-header-actions">
+                <a href="/home" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
+                <h2 style="color: #1a2e6b; margin: 0; font-weight: 600; font-size: 22px;"><i class="fa-solid fa-box" style="margin-right: 10px; color: #f59e0b;"></i> Editar Detalhes do Item</h2>
+            </div>
+            
+            <div class="form-card">
+                <form action="/atualizar_item" method="POST">
+                    <input type="hidden" name="item_id" value="{{ item.id }}">
+
+                    <div class="form-row-2">
                         <div class="form-group">
-                            <label>Nome do Produto (Apenas Visualização)</label>
-                            <input type="text" value="{{ item.nome }}" disabled style="background-color: #f1f5f9; color: #64748b;">
+                            <label for="nome">Nome do Produto (Apenas Visualização)</label>
+                            <input type="text" id="nome" name="nome" value="{{ item.nome }}" readonly>
                         </div>
-                        
                         <div class="form-group">
-                            <label for="area">Categoria / Área</label>
-                            <input type="text" id="area" name="area" value="{{ item.area }}" required>
+                            <label for="categoria">Categoria / Área</label>
+                            <select id="categoria" name="categoria">
+                                <option value="Geral" {% if item.categoria == 'Geral' %}selected{% endif %}>Geral</option>
+                                <option value="Mecânica" {% if item.categoria == 'Mecânica' %}selected{% endif %}>Mecânica</option>
+                                <option value="Elétrica" {% if item.categoria == 'Elétrica' %}selected{% endif %}>Elétrica</option>
+                                <option value="Manual" {% if item.categoria == 'Manual' %}selected{% endif %}>Manual</option>
+                            </select>
                         </div>
-                        
-                        <div style="display: flex; gap: 15px;">
-                            <div class="form-group" style="flex: 1;">
-                                <label for="quantidade">Quantidade</label>
-                                <input type="number" id="quantidade" name="quantidade" value="{{ item.quantidade }}" required>
-                            </div>
-                            <div class="form-group" style="flex: 1;">
-                                <label for="preco">Preço Unitário (R$)</label>
-                                <input type="number" step="0.01" id="preco" name="preco" value="{{ item.preco }}" required>
-                            </div>
-                        </div>
-                        
+                    </div>
+
+                    <div class="form-row-3">
                         <div class="form-group">
-                            <label for="link_midia">Link da Imagem (Mídia)</label>
-                            <input type="url" id="link_midia" name="link_midia" value="{{ item.link_midia }}">
+                            <label for="quantidade">Quantidade (Apenas Visualização)</label>
+                            <input type="number" id="quantidade" name="quantidade" value="{{ item.quantidade or 0 }}" readonly>
                         </div>
-                        
                         <div class="form-group">
-                            <label for="descricao">Descrição</label>
-                            <textarea id="descricao" name="descricao" rows="4">{{ item.descricao }}</textarea>
+                            <label for="preco">Preço Unitário (R$)</label>
+                            <input type="text" id="preco" name="preco" value="{{ item.preco or '0,00' }}">
                         </div>
-                        
-                        <div style="display: flex; gap: 15px; margin-top: 20px;">
-                            <button type="submit" class="btn-save" style="padding: 12px 24px; font-size: 15px; border: none; cursor: pointer; border-radius: 8px; font-weight: 600; flex: 1;">Salvar Alterações</button>
-                            <a href="/editar" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; background-color: #e2e8f0; color: #475569; padding: 12px 24px; border-radius: 8px; font-weight: 600; font-size: 15px;">Cancelar</a>
+                        <div class="form-group" style="flex: 2;">
+                            <label for="link_midia">Link da Imagem (Opcional)</label>
+                            <input type="url" id="link_midia" name="link_midia" value="{{ item.link_midia or '' }}" placeholder="https://exemplo.com/imagem.png">
                         </div>
-                    </form>
-                </div>
-            </main>
+                    </div>
+
+                    <div class="form-group-full">
+                        <label for="descricao">Descrição Completa</label>
+                        <textarea id="descricao" name="descricao" rows="5" placeholder="Escreva detalhes adicionais sobre as especificações do item...">{{ item.descricao }}</textarea>
+                    </div>
+
+                    <div class="actions-container">
+                        <button type="submit" class="btn-save">Salvar Alterações</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 

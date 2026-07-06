@@ -264,11 +264,40 @@ def movimentar():
     return redirect('/home')
 
 
+# ================= ROTAS DE EDIÇÃO CORRIGIDAS (SUPORTA SELEÇÃO E PARAMETRO DIRECTO) =================
+
 @app.route('/editar')
-def editar():
+@app.route('/editar/<string:id>')
+def editar(id=None):
     if 'usuario' not in session:
         return redirect('/')
-    return render_template('editar.html')
+        
+    item_selecionado = None
+    
+    # Se um ID foi passado na URL, busca as informações completas do item
+    if id:
+        try:
+            conexao = obter_conexao()
+            cursor = conexao.cursor(dictionary=True)
+            sql = "SELECT id_produto AS id, nome, area AS categoria, descricao FROM estoque WHERE id_produto = %s"
+            cursor.execute(sql, (id,))
+            item_selecionado = cursor.fetchone()
+            cursor.close()
+            conexao.close()
+        except Exception:
+            # Caso caia no modo de simulação, pega do mock
+            item_selecionado = next(( {
+                "id": i['id_produto'],
+                "nome": i['nome'],
+                "categoria": i['area'],
+                "descricao": i['descricao']
+            } for i in ESTOQUE_MOCK if i['id_produto'] == id), None)
+
+    # Se não encontrou ou não passou ID, passa um dicionário vazio pro Jinja não dar erro
+    if not item_selecionado:
+        item_selecionado = {"id": "", "nome": "", "categoria": "", "descricao": ""}
+        
+    return render_template('editar.html', item=item_selecionado)
 
 
 @app.route('/api/buscar_item_edicao')
@@ -381,13 +410,11 @@ def enviar_codigo_perfil():
     })
 
 
-# AGORA ESSA ROTA FAZ TUDO: PEGA OS DADOS (GET) E SALVA (POST)
 @app.route('/atualizar_perfil', methods=['GET', 'POST'])
 def atualizar_perfil():
     if 'usuario' not in session:
         return redirect('/')
 
-    # SE O USUÁRIO ENVIOU O FORMULÁRIO (POST)
     if request.method == 'POST':
         nova_senha = request.form.get('senha')
         codigo_inserido = request.form.get('codigo_verificacao')
@@ -417,13 +444,12 @@ def atualizar_perfil():
             conexao.commit()
             cursor.close()
             conexao.close()
-            flash("Perfil atualizado com sucesso!", "success")
+            flash("Perfil updated com sucesso!", "success")
         except Exception:
             flash("Perfil atualizado com sucesso! (Modo Simulação)", "success")
 
         return redirect('/atualizar_perfil')
 
-    # SE O USUÁRIO SÓ ENTROU NA PÁGINA (GET)
     try:
         conexao = obter_conexao()
         cursor = conexao.cursor(dictionary=True)
