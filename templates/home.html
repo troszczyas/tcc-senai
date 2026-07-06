@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="../static/item.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
         /* Estrutura Base do Layout */
         body {
             margin: 0;
@@ -163,38 +165,171 @@
             cursor: pointer;
         }
 
-        /* Dropdown do perfil */
+        /* PERFIL DO USUÁRIO - MAIOR E BRANCO POR PADRÃO */
         .user-profile {
             position: relative;
             cursor: pointer;
             color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 100%;
+            padding: 0 5px;
+            transition: color 0.2s ease;
         }
+        .user-profile .fa-circle-user {
+            font-size: 26px;
+            color: white;
+            transition: color 0.2s ease;
+        }
+        .user-profile .username {
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        /* EFEITO HOVER LARANJA NO BONEQUINHO */
+        .user-profile:hover {
+            color: #f59e0b;
+        }
+        .user-profile:hover .fa-circle-user {
+            color: #f59e0b;
+        }
+
+        /* DROPDOWN MENU ATUALIZADO */
         .dropdown-menu {
             display: none;
             position: absolute;
-            top: 100%;
+            top: 50px;
             right: 0;
             background-color: white;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             border-radius: 8px;
-            padding: 10px 0;
-            min-width: 160px;
+            padding: 8px 0;
+            min-width: 190px;
             z-index: 2500;
             text-align: left;
         }
         .dropdown-menu a {
-            display: block;
-            padding: 10px 15px;
-            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 16px;
+            color: #333 !important;
             text-decoration: none;
             font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .dropdown-menu a i {
+            font-size: 14px;
+            width: 16px;
+            text-align: center;
         }
         .dropdown-menu a:hover {
             background-color: #f5f5f5;
-            color: #1a2e6b;
+            color: #1a2e6b !important;
         }
         .user-profile:hover .dropdown-menu {
             display: block;
+        }
+
+        /* ESTRUTURA DO POPUP DE LOGIN (MODAL) */
+        .login-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .login-modal-box {
+            background-color: white;
+            width: 100%;
+            max-width: 400px;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            animation: modalFadeIn 0.25s ease-out;
+        }
+        @keyframes modalFadeIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #64748b;
+            cursor: pointer;
+        }
+        .modal-close-btn:hover {
+            color: #ef4444;
+        }
+        .login-modal-box h3 {
+            color: #1a2e6b;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* CAMPOS DO FORMULÁRIO DO MODAL */
+        .form-field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+            text-align: left;
+        }
+        .form-field-group label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #475569;
+        }
+        .form-field-group input {
+            width: 100%;
+            padding: 13px 20px;
+            border: 1px solid #cbd5e1;
+            border-radius: 30px;
+            background-color: #f8fafc;
+            color: #1e293b;
+            font-size: 15px;
+            outline: none;
+            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        .form-field-group input:focus {
+            border-color: #f59e0b;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+        }
+        .btn-submit-modern {
+            padding: 13px 45px;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 30px;
+            font-weight: 600;
+            background-color: #f59e0b;
+            color: white;
+            box-shadow: 0 4px 6px rgba(245, 158, 11, 0.2);
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.2s ease;
+        }
+        .btn-submit-modern:hover {
+            background-color: #d97706;
+            transform: translateY(-1px);
         }
     </style>
 </head>
@@ -209,32 +344,20 @@
             <div class="brand-align" style="display: flex; align-items: center; gap: 16px; height: 100%;">
                 <img src="https://www.imagemhost.com.br/images/2024/11/22/Logo-novo-SENAI_-sem-slogan_755X325.png" 
                      alt="Logo SENAI" 
-                     style="
-                        max-height: 38px; 
-                        object-fit: contain;
-                        filter: brightness(0) invert(1) drop-shadow(0px 0px 0px #fff) contrast(1) hue-rotate(320deg) saturate(20);
-                        mix-blend-mode: screen;
-                     "
-                     onerror="this.style.filter='none';"> <div style="width: 2px; height: 24px; background-color: rgba(255, 255, 255, 0.35); border-radius: 2px;"></div>
-                
-                <span style="
-                    margin: 0; 
-                    font-size: 20px; 
-                    font-weight: 600; 
-                    color: white; 
-                    letter-spacing: 1px; 
-                    text-transform: uppercase;
-                    font-family: 'Poppins', sans-serif;
-                ">Almoxarifado</span>
+                     style="max-height: 38px; object-fit: contain; filter: brightness(0) invert(1) drop-shadow(0px 0px 0px #fff) contrast(1) hue-rotate(320deg) saturate(20); mix-blend-mode: screen;"
+                     onerror="this.style.filter='none';"> 
+                <div style="width: 2px; height: 24px; background-color: rgba(255, 255, 255, 0.35); border-radius: 2px;"></div>
+                <span style="margin: 0; font-size: 20px; font-weight: 600; color: white; letter-spacing: 1px; text-transform: uppercase;">Almoxarifado</span>
             </div>
         </div>
         
         <div class="user-profile">
             <i class="fa-solid fa-circle-user"></i>
-            <span class="username">admin <i class="fa-solid fa-chevron-down" style="font-size: 12px; margin-left: 5px;"></i></span>
+            <span class="username">admin <i class="fa-solid fa-chevron-down" style="font-size: 11px; margin-left: 3px;"></i></span>
             <div class="dropdown-menu">
-                <a href="/atualizar_perfil"><i class="fa-solid fa-user-gear"></i> Perfil</a>
-                <a href="/logout" style="color: #ef4444;"><i class="fa-solid fa-right-from-bracket"></i> Sair / Logout</a>
+                <a href="#" id="openLoginModal"><i class="fa-solid fa-user-gear"></i> Trocar de Perfil</a>
+                <a href="/atualizar_perfil"><i class="fa-solid fa-id-card"></i> Atualizar Perfil</a>
+                <a href="/logout" style="color: #ef4444 !important;"><i class="fa-solid fa-right-from-bracket"></i> Sair / Logout</a>
             </div>
         </div>
     </header>
@@ -347,8 +470,30 @@
         </div>
     </div>
 
+    <div class="login-modal-overlay" id="loginModal">
+        <div class="login-modal-box">
+            <button class="modal-close-btn" id="closeLoginModal"><i class="fa-solid fa-xmark"></i></button>
+            <h3><i class="fa-solid fa-user-lock"></i> Trocar Perfil</h3>
+            
+            <form action="/login" method="POST">
+                <div class="form-field-group">
+                    <label for="modal_username">Usuário</label>
+                    <input type="text" id="modal_username" name="username" placeholder="Digite seu usuário" required>
+                </div>
+                <div class="form-field-group">
+                    <label for="modal_password">Senha</label>
+                    <input type="password" id="modal_password" name="password" placeholder="Digite sua senha" required>
+                </div>
+                <div style="margin-top: 25px;">
+                    <button type="submit" class="btn-submit-modern" style="width: 100%;">Entrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // Controle da Sidebar Retrátil
             const sidebarToggle = document.getElementById('sidebarToggle');
             const sidebar = document.getElementById('mySidebar');
 
@@ -357,8 +502,34 @@
                     sidebar.classList.toggle('collapsed');
                 });
             }
+
+            // Controle do Modal de Login (Trocar Perfil)
+            const openModalBtn = document.getElementById('openLoginModal');
+            const closeModalBtn = document.getElementById('closeLoginModal');
+            const loginModal = document.getElementById('loginModal');
+
+            if (openModalBtn && loginModal) {
+                openModalBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    loginModal.style.display = 'flex';
+                });
+            }
+
+            if (closeModalBtn && loginModal) {
+                closeModalBtn.addEventListener('click', function() {
+                    loginModal.style.display = 'none';
+                });
+            }
+
+            // Fecha o modal caso clique fora da caixa branca
+            window.addEventListener('click', function(event) {
+                if (event.target === loginModal) {
+                    loginModal.style.display = 'none';
+                }
+            });
         });
 
+        // Funções da Foto do Item
         function abrirFoto(nome, url) {
             document.getElementById('modalNome').innerText = nome;
             document.getElementById('modalImg').src = url;
@@ -369,12 +540,13 @@
             document.getElementById('meuModal').style.display = 'none';
         }
 
-        window.onclick = function(event) {
-            let modal = document.getElementById('meuModal');
-            if (event.target == modal) {
-                modal.style.display = 'none';
+        // Evento extra para fechar o modal de foto clicando fora
+        window.addEventListener('click', function(event) {
+            let modalFoto = document.getElementById('meuModal');
+            if (event.target == modalFoto) {
+                modalFoto.style.display = 'none';
             }
-        }
+        });
     </script>
 </body>
 </html>

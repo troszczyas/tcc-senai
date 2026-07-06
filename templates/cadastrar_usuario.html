@@ -103,40 +103,91 @@
             box-sizing: border-box;
             transition: all 0.3s ease;
         }
-        .user-profile {
-            position: relative;
-            cursor: pointer;
-            color: white;
+        
+        /* ================= DROPDOWN CORRIGIDO COM HOVER LARANJA ================= */
+        .custom-user-profile {
+            position: relative !important;
+            cursor: pointer !important;
+            color: white !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            padding: 5px 10px !important;
+            height: 100% !important;
+            user-select: none !important;
+            transition: color 0.2s ease !important;
         }
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background-color: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            border-radius: 8px;
-            padding: 10px 0;
-            min-width: 160px;
-            z-index: 2500;
-            text-align: left;
+        /* Cor padrão: Branco */
+        .custom-user-profile i.fa-circle-user {
+            font-size: 24px !important; 
+            color: white !important;
+            transition: color 0.2s ease !important;
         }
-        .dropdown-menu a {
-            display: block;
-            padding: 10px 15px;
-            color: #333;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        .dropdown-menu a:hover {
-            background-color: #f5f5f5;
-            color: #1a2e6b;
-        }
-        .user-profile:hover .dropdown-menu {
-            display: block;
+        .custom-user-profile .username-text {
+            font-size: 16px !important;
+            font-weight: 600 !important;
+            color: white !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            transition: color 0.2s ease !important;
         }
         
-        /* Estilos do Formulário Alinhado */
+        /* SÓ FICA LARANJA AO PASSAR O MOUSE (HOVER) */
+        .custom-user-profile:hover {
+            color: #f59e0b !important;
+        }
+        .custom-user-profile:hover i.fa-circle-user,
+        .custom-user-profile:hover .username-text {
+            color: #f59e0b !important;
+        }
+
+        /* Menu suspenso */
+        .custom-dropdown-menu {
+            display: none !important;
+            position: absolute !important;
+            top: 48px !important;
+            right: 0 !important;
+            background-color: white !important;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.15) !important;
+            border-radius: 12px !important;
+            padding: 12px 0 !important;
+            min-width: 200px !important;
+            z-index: 99999 !important;
+            text-align: left !important;
+        }
+        .custom-dropdown-menu a {
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+            padding: 12px 20px !important;
+            color: #333333 !important;
+            text-decoration: none !important;
+            font-size: 15px !important;
+            font-weight: 500 !important;
+            font-family: 'Poppins', sans-serif !important;
+            transition: background 0.2s !important;
+        }
+        .custom-dropdown-menu a i {
+            font-size: 16px !important;
+            width: 22px !important;
+            text-align: center !important;
+            color: #4a5568 !important;
+        }
+        .custom-dropdown-menu a:hover {
+            background-color: #f5f7fa !important;
+        }
+        .custom-dropdown-menu a.logout-item {
+            color: #ef4444 !important;
+        }
+        .custom-dropdown-menu a.logout-item i {
+            color: #ef4444 !important;
+        }
+        .custom-user-profile:hover .custom-dropdown-menu {
+            display: block !important;
+        }
+        
+        /* Estilos do Formulário */
         .form-card {
             background-color: white;
             padding: 30px;
@@ -170,6 +221,22 @@
         .form-group input:focus, .form-group select:focus {
             border-color: #1a2e6b;
         }
+        .btn-save {
+            background-color: #1a2e6b;
+            color: white;
+            font-weight: 600;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .btn-save:hover {
+            background-color: #11204d;
+        }
     </style>
 </head>
 <body>
@@ -185,12 +252,16 @@
                 <span style="margin: 0; font-size: 20px; font-weight: 600; color: white; letter-spacing: 1px; text-transform: uppercase;">Almoxarifado</span>
             </div>
         </div>
-        <div class="user-profile">
+
+        <div class="custom-user-profile">
             <i class="fa-solid fa-circle-user"></i>
-            <span class="username">admin <i class="fa-solid fa-chevron-down" style="font-size: 12px; margin-left: 5px;"></i></span>
-            <div class="dropdown-menu">
-                <a href="/atualizar_perfil"><i class="fa-solid fa-user-gear"></i> Perfil</a>
-                <a href="/logout" style="color: #ef4444;"><i class="fa-solid fa-right-from-bracket"></i> Sair / Logout</a>
+            <span class="username-text">
+                admin <i class="fa-solid fa-chevron-down" style="font-size: 11px;"></i>
+            </span>
+            <div class="custom-dropdown-menu">
+                <a href="/trocar_perfil"><i class="fa-solid fa-user-gear"></i> Trocar de Perfil</a>
+                <a href="/atualizar_perfil"><i class="fa-solid fa-address-card"></i> Atualizar Perfil</a>
+                <a href="/logout" class="logout-item"><i class="fa-solid fa-right-from-bracket"></i> Sair / Logout</a>
             </div>
         </div>
     </header>
@@ -228,7 +299,7 @@
                                 <option value="Administrador">Administrador</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn-save" style="width: 100%; padding: 12px; border-radius: 8px; font-size: 15px; border: none; cursor: pointer; margin-top: 10px;">Salvar Usuário</button>
+                        <button type="submit" class="btn-save">Salvar Usuário</button>
                     </form>
                 </div>
             </main>

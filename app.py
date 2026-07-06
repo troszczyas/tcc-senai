@@ -133,7 +133,7 @@ def home():
             try:
                 cursor.execute("SELECT id_produto, nome, area, quantidade, preco, descricao, link_midia FROM estoque ORDER BY id_produto ASC")
             except Exception:
-                cursor.execute("SELECT id_produto, nome, area, quantidade, descricao, link_midia FROM estoque ORDER BY id_produto ASC")
+                cursor.execute("SELECT id_produto, nome, area, gateway AS quantidade, descricao, link_midia FROM estoque ORDER BY id_produto ASC")
 
         itens = cursor.fetchall()
         
@@ -193,7 +193,7 @@ def salvar_item():
         cursor.close()
         conexao.close()
     except Exception:
-        flash("Item salvo no modo simulação!", "success")
+        flash("Item saved in simulation mode!", "success")
 
     return redirect('/home')
 
@@ -247,7 +247,6 @@ def movimentar():
         if tipo == "entrada":
             novo_total = estoque_atual + quantidade
         else:
-            # CORRIGIDO: quantidade em vez de quantity
             if quantidade > estoque_atual:
                 cursor.close()
                 conexao.close()
@@ -295,7 +294,7 @@ def buscar_item_edicao():
                 if termo in item['nome'].lower():
                     resultados.append({
                         "id": item['id_produto'],
-                        "nome": item['nome'],
+                        "name": item['nome'],
                         "categoria": item['area'],
                         "preco": "Uso Interno",
                         "descricao": item['descricao']
@@ -366,13 +365,65 @@ def salvar_usuario():
     return redirect('/home')
 
 
-# ================= SEÇÃO DE PERFIL COM VALIDAÇÃO DE CÓDIGO =================
+# ================= SEÇÃO DE PERFIL TOTALMENTE UNIFICADA (GET E POST) =================
 
-@app.route('/perfil')
-def perfil():
+@app.route('/enviar_codigo_perfil', methods=['POST'])
+def enviar_codigo_perfil():
+    if 'usuario' not in session:
+        return jsonify({"status": "error", "message": "Sessão expirada."})
+    
+    codigo = str(random.randint(100000, 999999))
+    session['codigo_verificacao'] = codigo
+    
+    return jsonify({
+        "status": "success", 
+        "message": f"Código de segurança gerado! Use o número: {codigo}"
+    })
+
+
+# AGORA ESSA ROTA FAZ TUDO: PEGA OS DADOS (GET) E SALVA (POST)
+@app.route('/atualizar_perfil', methods=['GET', 'POST'])
+def atualizar_perfil():
     if 'usuario' not in session:
         return redirect('/')
-    
+
+    # SE O USUÁRIO ENVIOU O FORMULÁRIO (POST)
+    if request.method == 'POST':
+        nova_senha = request.form.get('senha')
+        codigo_inserido = request.form.get('codigo_verificacao')
+        nova_area = request.form.get('area')
+        novo_estado = request.form.get('estado')
+        nova_cidade = request.form.get('cidade')
+
+        if nova_senha:
+            codigo_salvo = session.get('codigo_verificacao')
+            if not codigo_inserido or codigo_inserido != codigo_salvo:
+                flash("Código de verificação incorreto! A senha não foi alterada.", "error")
+                return redirect('/atualizar_perfil')
+            
+            session.pop('codigo_verificacao', None)
+
+        try:
+            conexao = obter_conexao()
+            cursor = conexao.cursor()
+            
+            if nova_senha:
+                sql = "UPDATE usuarios SET senha = %s, area_atuacao = %s, estado = %s, city = %s WHERE login = %s"
+                cursor.execute(sql, (nova_senha, nova_area, novo_estado, nova_cidade, session['usuario']))
+            else:
+                sql = "UPDATE usuarios SET area_atuacao = %s, estado = %s, city = %s WHERE login = %s"
+                cursor.execute(sql, (nova_area, novo_estado, nova_cidade, session['usuario']))
+                
+            conexao.commit()
+            cursor.close()
+            conexao.close()
+            flash("Perfil atualizado com sucesso!", "success")
+        except Exception:
+            flash("Perfil atualizado com sucesso! (Modo Simulação)", "success")
+
+        return redirect('/atualizar_perfil')
+
+    # SE O USUÁRIO SÓ ENTROU NA PÁGINA (GET)
     try:
         conexao = obter_conexao()
         cursor = conexao.cursor(dictionary=True)
@@ -392,60 +443,6 @@ def perfil():
         }
     
     return render_template('atualizar_perfil.html', user=dados_usuario)
-
-
-@app.route('/enviar_codigo_perfil', methods=['POST'])
-def enviar_codigo_perfil():
-    if 'usuario' not in session:
-        return jsonify({"status": "error", "message": "Sessão expirada."})
-    
-    codigo = str(random.randint(100000, 999999))
-    session['codigo_verificacao'] = codigo
-    
-    return jsonify({
-        "status": "success", 
-        "message": f"Código de segurança gerado! Use o número: {codigo}"
-    })
-
-
-@app.route('/atualizar_perfil', methods=['POST'])
-def atualizar_perfil():
-    if 'usuario' not in session:
-        return redirect('/')
-
-    nova_senha = request.form.get('senha')
-    codigo_inserido = request.form.get('codigo_verificacao')
-    nova_area = request.form.get('area')
-    novo_estado = request.form.get('estado')
-    nova_cidade = request.form.get('cidade')
-
-    if nova_senha:
-        codigo_salvo = session.get('codigo_verificacao')
-        if not codigo_inserido or codigo_inserido != codigo_salvo:
-            flash("Código de verificação incorreto! A senha não foi alterada.", "error")
-            return redirect('/perfil')
-        
-        session.pop('codigo_verificacao', None)
-
-    try:
-        conexao = obter_conexao()
-        cursor = conexao.cursor()
-        
-        if nova_senha:
-            sql = "UPDATE usuarios SET senha = %s, area_atuacao = %s, estado = %s, city = %s WHERE login = %s"
-            cursor.execute(sql, (nova_senha, nova_area, novo_estado, nova_cidade, session['usuario']))
-        else:
-            sql = "UPDATE usuarios SET area_atuacao = %s, estado = %s, city = %s WHERE login = %s"
-            cursor.execute(sql, (nova_area, novo_estado, nova_cidade, session['usuario']))
-            
-        conexao.commit()
-        cursor.close()
-        conexao.close()
-        flash("Perfil atualizado com sucesso!", "success")
-    except Exception:
-        flash("Perfil atualizado com sucesso! (Modo Simulação)", "success")
-
-    return redirect('/perfil')
 
 
 @app.route('/logout')

@@ -4,21 +4,216 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Almoxarifado SENAI - Login</title>
-    <link rel="stylesheet" href="/static/login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            background-color: #1a2e6b;
+            overflow: hidden;
+        }
+
+        /* Estrutura dividida em 2 colunas */
+        .container {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+
+        /* Lado esquerdo: Formulário */
+        .login-section {
+            flex: 1;
+            max-width: 550px; /* Aumentado para dar mais respiro lateral */
+            background-color: #1a2e6b;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            box-sizing: border-box;
+            color: white;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 420px; /* AUMENTADO: Form mais largo e imponente */
+        }
+
+        /* Container da logo alinhada com texto */
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 40px;
+        }
+
+        .logo-img {
+            max-height: 44px; /* Aumentado para equilibrar com o texto maior */
+            object-fit: contain;
+            filter: brightness(0) invert(1) drop-shadow(0px 0px 0px #fff) contrast(1) hue-rotate(320deg) saturate(20);
+            mix-blend-mode: screen;
+        }
+
+        .brand-divider {
+            width: 2.5px;
+            height: 34px; /* Aumentado para a altura do título */
+            background-color: rgba(255, 255, 255, 0.35);
+            border-radius: 2px;
+        }
+
+        .title {
+            margin: 0;
+            font-size: 32px; /* AUMENTADO: Título maior e mais visível */
+            font-weight: 600;
+            color: white;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #cbd5e1;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 20px; /* Inputs ligeiramente maiores */
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: #f1f5f9;
+            color: #1e293b;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.25);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px; /* Botão maior acompanhando os inputs */
+            border-radius: 30px;
+            border: none;
+            background-color: #f59e0b;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            margin-top: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-submit:hover {
+            background-color: #d97706;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .forgot-password {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .forgot-password:hover {
+            color: white;
+        }
+
+        /* Lado direito: Banner Industrial */
+        .image-section {
+            flex: 1;
+            position: relative;
+            background-image: linear-gradient(rgba(26, 46, 107, 0.2), rgba(26, 46, 107, 0.5)), url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1200');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: flex-start;
+            padding: 60px;
+            box-sizing: border-box;
+        }
+
+        .image-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .motivational-overlay {
+            position: relative;
+            z-index: 2;
+            max-width: 600px;
+            color: white;
+            text-shadow: 0 3px 15px rgba(0, 0, 0, 0.7);
+        }
+
+        .motivational-overlay h1 {
+            font-size: 38px;
+            font-weight: 700;
+            line-height: 1.3;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        /* Responsividade para telas menores */
+        @media (max-width: 850px) {
+            .image-section {
+                display: none;
+            }
+            .login-section {
+                max-width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
+
     <div class="container">
         <section class="login-section">
             <div class="login-box">
-                <img src="/static/logo-senai.png" alt="Logo SENAI" class="logo-img" onerror="this.style.display='none'">
                 
-                <h2 class="title">Almoxarifado</h2>
-                
+                <div class="brand-container">
+                    <img src="https://www.imagemhost.com.br/images/2024/11/22/Logo-novo-SENAI_-sem-slogan_755X325.png" 
+                         alt="Logo SENAI" 
+                         class="logo-img" 
+                         onerror="this.src='/static/logo-senai.png';">
+                    <div class="brand-divider"></div>
+                    <h2 class="title">Almoxarifado</h2>
+                </div>
+
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
                         {% for category, message in messages %}
-                            <div class="alert" style="color: #ff4d4d; margin-bottom: 15px; font-weight: 600; font-size: 14px;">
+                            <div class="alert" style="color: #ff4d4d; margin-bottom: 20px; font-weight: 600; font-size: 15px; text-align: center; background: rgba(255,77,77,0.1); padding: 10px; border-radius: 8px;">
                                 {{ message }}
                             </div>
                         {% endfor %}
@@ -28,12 +223,12 @@
                 <form action="/logar" method="POST">
                     <div class="input-group">
                         <label for="usuario">Usuário</label>
-                        <input type="text" id="usuario" name="usuario" placeholder="Digite seu usuário" required>
+                        <input type="text" id="usuario" name="usuario" placeholder="Digite seu usuário" required autocomplete="username">
                     </div>
                     
                     <div class="input-group">
                         <label for="senha">Senha</label>
-                        <input type="password" id="senha" name="senha" placeholder="Digite sua senha" required>
+                        <input type="password" id="senha" name="senha" placeholder="Digite sua senha" required autocomplete="current-password">
                     </div>
                     
                     <button type="submit" class="btn-submit">Entrar</button>
@@ -43,7 +238,12 @@
             </div>
         </section>
 
-        <section class="image-section"></section>
+        <section class="image-section">
+            <div class="motivational-overlay">
+                <h1>O lugar onde suas expectativas se tornam realidade.</h1>
+            </div>
+        </section>
     </div>
+
 </body>
 </html>
