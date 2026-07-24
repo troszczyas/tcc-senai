@@ -259,3 +259,22 @@ body {
     color: #666;
     font-size: 16px;
 }
+/* Botão Ver Foto */
+.btn-ver-foto {
+    background-color: transparent !important;
+    color: #1a2e6b !important;            /* Texto e borda no azul do sistema */
+    border: 1px solid #1a2e6b !important;
+    padding: 6px 14px !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Quando passa o mouse por cima: fica azul preenchido com texto branco */
+.btn-ver-foto:hover {
+    background-color: #1a2e6b !important; /* Fundo Azul */
+    color: #ffffff !important;             /* Texto Branco */
+    transform: translateY(-1px);
+}

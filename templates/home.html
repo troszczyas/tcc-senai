@@ -445,7 +445,7 @@
                                 <td style="padding: 15px 20px; color: #2e7d32; font-weight: 600;">R$ {{ "%.2f"|format(item.preco|float) }}</td>
                                 <td style="padding: 15px 20px; color: #666; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ item.descricao }}">{{ item.descricao }}</td>
                                 <td style="padding: 15px 20px; text-align: center;">
-                                    <button type="button" class="btn-save" style="padding: 6px 12px; font-size: 13px; border: none; cursor: pointer; border-radius: 6px;" onclick="abrirFoto('{{ item.nome }}', '{{ item.link_midia }}')">Ver Foto</button>
+                                 <button class="btn-ver-foto" onclick="abrirFoto('{{ item.nome }}', '{{ item.link_midia }}')">Ver Foto</button>
                                 </td>
                             </tr>
                             {% else %}

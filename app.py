@@ -166,7 +166,7 @@ def salvar_item():
         return redirect('/')
 
     nome = limpar_texto(request.form['nome'])
-    area = request.form['categoria']  
+    area = request.form['area']
     quantidade = int(request.form['quantidade'])
     descricao = limpar_texto(request.form.get('descricao', ''))
     link_midia = request.form.get('link_midia', '')
@@ -174,7 +174,7 @@ def salvar_item():
     try:
         conexao = obter_conexao()
         cursor = conexao.cursor(dictionary=True)
-        
+
         cursor.execute("SELECT * FROM estoque WHERE nome = %s AND area = %s", (nome, area))
         produto_existente = cursor.fetchone()
 
@@ -192,8 +192,11 @@ def salvar_item():
         conexao.commit()
         cursor.close()
         conexao.close()
-    except Exception:
-        flash("Item saved in simulation mode!", "success")
+
+    except Exception as e:
+        print("Erro ao salvar:", e)
+
+    return redirect('/home')
 
     return redirect('/home')
 
